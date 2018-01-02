@@ -17,6 +17,11 @@ public class KeyController {
     private static final int KEYCODE_QWERTY_DOWN  = -20;
     private static final int KEYCODE_QWERTY_LEFT  = -21;
     private static final int KEYCODE_QWERTY_RIGHT = -22;
+    // 未使用
+    private static final int KEYCODE_QWERTY_ALT   = -6;
+    private static final int KEYCODE_QWERTY_ABC   = -101;
+    private static final int KEYCODE_QWERTY_DONE  = -4;
+
 
     private static KeyController singleton = new KeyController();
     private KEYoneService mService;
@@ -40,6 +45,17 @@ public class KeyController {
     }
 
     public void onKey(int primaryCode, int[] keyCodes) {
+
+        // 画面に定義しているが未実装のキー
+        if (primaryCode == KEYCODE_QWERTY_ALT) {
+            return;
+        }
+        if (primaryCode == KEYCODE_QWERTY_ABC) {
+            return;
+        }
+        if (primaryCode == KEYCODE_QWERTY_DONE) {
+            return;
+        }
 
         if (primaryCode == Keyboard.KEYCODE_DELETE) {
             keyDownUp(KeyEvent.KEYCODE_DEL);
