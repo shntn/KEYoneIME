@@ -66,6 +66,7 @@ enum StateKeyboard {
                 case KeyEvent.KEYCODE_ENTER: c = 10; break; // ENTER
 
                 case KeyEvent.KEYCODE_0: c = 48; break;     // 0
+                case KeyEvent.KEYCODE_SPACE: c = 32; break; // SPACE
                 default: c = keycode;
             }
             return c;
@@ -134,6 +135,7 @@ enum StateKeyboard {
                 case KeyEvent.KEYCODE_ENTER: c = 10; break; // ENTER
 
                 case KeyEvent.KEYCODE_0: c = 48; break;     // 0
+                case KeyEvent.KEYCODE_SPACE: c = 32; break; // SPACE
                 default: c = keycode;
             }
             return c;
@@ -202,6 +204,7 @@ enum StateKeyboard {
                 case KeyEvent.KEYCODE_ENTER: c = 10; break; // ENTER
 
                 case KeyEvent.KEYCODE_0: c = 48; break;     // 0
+                case KeyEvent.KEYCODE_SPACE: c = 32; break; // SPACE
                 default: c = keycode;
             }
             return c;
@@ -270,6 +273,7 @@ enum StateKeyboard {
                 case KeyEvent.KEYCODE_ENTER: c = 10; break; // ENTER
 
                 case KeyEvent.KEYCODE_0: c = 48; break;     // 0
+                case KeyEvent.KEYCODE_SPACE: c = 32; break; // SPACE
                 default: c = keycode;
             }
             return c;
@@ -338,6 +342,7 @@ enum StateKeyboard {
                 case KeyEvent.KEYCODE_ENTER: c = 10; break; // ENTER
 
                 case KeyEvent.KEYCODE_0: c = 48; break;     // 0
+                case KeyEvent.KEYCODE_SPACE: c = 32; break; // SPACE
                 default: c = keycode;
             }
             return c;
