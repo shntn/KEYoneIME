@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ソフトキーボードの設定
+
+どこで使われる？
+
+    AndroidManifest.xml に記載される service タグの name で指定されたクラスで参照される。
+    具体的には、onCreateInputView メソッドで本ファイルが読み込まれる。
+
+設定内容
+
+KEYoneKeyboardoard
+        デフォルトの設定
+
+        android:keyWidth        キー1つの横幅
+        android:keyHeight       キー1つの高さ
+        android:horizontalGap   キーとキーの間の横幅
+        android:verticalGap     キーとキーの間の高さ
+
+KEYoneKeyboardoard > Row          ソフトキーボード1列分の設定
+
+KEYoneKeyboardoard > Row > Key
+        android:codes           キーが押された場合のキーコード
+                                複数指定する場合は、コンマ区切り
+        android:keyLabel        キーに表示する文字列
+        android:keyIcon         キーに表示する画像
+        android:keyEdge         キーの縁フラグ
+        android:isModifier      ShiftやAltなどの修飾キーであるかを表すフラグ
+        android:isSticky        トグルキーであるかを表すフラグ
+        android:isRepeatable    長押しでキーリピートを行うかを表すフラグ
+
+-->
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="10%p"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    android:keyHeight="@dimen/key_height"
+    >
+    <Row>
+        <Key android:codes="35"  android:keyLabel="#" android:keyEdgeFlags="left"/>
+        <Key android:codes="49"  android:keyLabel="1"/>
+        <Key android:codes="50" android:keyLabel="2"/>
+        <Key android:codes="51" android:keyLabel="3"/>
+        <Key android:codes="40"  android:keyLabel="("/>
+        <Key android:codes="41"  android:keyLabel=")"/>
+        <Key android:codes="95"  android:keyLabel="_"/>
+        <Key android:codes="45"  android:keyLabel="-"/>
+        <Key android:codes="43"  android:keyLabel="+"/>
+        <Key android:codes="64"  android:keyLabel="@" android:keyEdgeFlags="right"/>
+    </Row>
+
+    <Row>
+        <Key android:codes="42" android:keyLabel="*" android:keyEdgeFlags="left"/>
+        <Key android:codes="52" android:keyLabel="4"/>
+        <Key android:codes="53" android:keyLabel="5"/>
+        <Key android:codes="54" android:keyLabel="6"/>
+        <Key android:codes="47" android:keyLabel="/"/>
+        <Key android:codes="58" android:keyLabel=":"/>
+        <Key android:codes="59" android:keyLabel=";"/>
+        <Key android:codes="39" android:keyLabel="'"/>
+        <Key android:codes="34" android:keyLabel='"'/>
+        <Key android:codes="@integer/key_delete" android:keyIcon="@drawable/sym_keyboard_delete"
+            android:keyEdgeFlags="right"
+            android:isRepeatable="true"/>
+    </Row>
+
+    <Row>
+        <Key android:codes="-1" android:keyIcon="@drawable/sym_keyboard_shift"
+            android:isModifier="true"
+            android:isSticky="true" android:keyEdgeFlags="left"/>
+        <Key android:codes="55" android:keyLabel="7"/>
+        <Key android:codes="56" android:keyLabel="8"/>
+        <Key android:codes="57" android:keyLabel="9"/>
+        <Key android:codes="63" android:keyLabel="?"/>
+        <Key android:codes="33" android:keyLabel="!"/>
+        <Key android:codes="44" android:keyLabel=","/>
+        <Key android:codes="46" android:keyLabel="."/>
+        <Key android:codes="36" android:keyLabel="$"/>
+        <Key android:codes="10" android:keyIcon="@drawable/sym_keyboard_return"
+            android:keyEdgeFlags="right" />
+    </Row>
+
+    <Row android:rowEdgeFlags="bottom">
+        <Key android:codes="@integer/key_alt_left"   android:keyLabel="alt" android:keyEdgeFlags="left"/>
+        <Key android:codes="@integer/key_ctrl_left"   android:keyLabel="Ctrl"
+            android:isModifier="true" />
+        <Key android:codes="48"   android:keyLabel="0" />
+        <Key android:codes="@integer/key_space"   android:keyIcon="@drawable/sym_keyboard_space"
+            android:keyWidth="40%p" android:isRepeatable="true"/>
+        <Key android:codes="@integer/key_sym"  android:keyLabel="SYM" />
+        <Key android:codes="-4"   android:keyLabel="done"
+            android:keyWidth="20%p" android:keyEdgeFlags="right"/>
+    </Row>
+</Keyboard>

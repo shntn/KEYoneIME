@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="key_sym">-1012</integer>
+    <integer name="key_dpad_right">-22</integer>
+    <integer name="key_dpad_left">-21</integer>
+    <integer name="key_dpad_down">-20</integer>
+    <integer name="key_dpad_up">-19</integer>
+    <integer name="key_alt_left">-6</integer>
+    <integer name="key_delete">-5</integer>
+    <integer name="key_ctrl_left">-2</integer>
+    <integer name="key_shift">-1</integer>
+    <integer name="key_tab">9</integer>
+    <integer name="key_enter">10</integer>
+    <integer name="key_esc">27</integer>
+    <integer name="key_space">32</integer>
+</resources>

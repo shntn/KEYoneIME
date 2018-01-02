@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ソフトキーボードの設定
+
+どこで使われる？
+
+    AndroidManifest.xml に記載される service タグの name で指定されたクラスで参照される。
+    具体的には、onCreateInputView メソッドで本ファイルが読み込まれる。
+
+設定内容
+
+KEYoneKeyboardoard
+        デフォルトの設定
+
+        android:keyWidth        キー1つの横幅
+        android:keyHeight       キー1つの高さ
+        android:horizontalGap   キーとキーの間の横幅
+        android:verticalGap     キーとキーの間の高さ
+
+KEYoneKeyboardoard > Row          ソフトキーボード1列分の設定
+
+KEYoneKeyboardoard > Row > Key
+        android:codes           キーが押された場合のキーコード
+                                複数指定する場合は、コンマ区切り
+        android:keyLabel        キーに表示する文字列
+        android:keyIcon         キーに表示する画像
+        android:keyEdge         キーの縁フラグ
+        android:isModifier      ShiftやAltなどの修飾キーであるかを表すフラグ
+        android:isSticky        トグルキーであるかを表すフラグ
+        android:isRepeatable    長押しでキーリピートを行うかを表すフラグ
+
+-->
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="10%p"
+    android:horizontalGap="0px"
+    android:verticalGap="0px"
+    android:keyHeight="@dimen/key_height"
+    >
+</Keyboard>

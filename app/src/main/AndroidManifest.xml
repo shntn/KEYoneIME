@@ -1,0 +1,38 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.zemle.keyoneime">
+
+    <application android:label="KEYoneIME">
+        <service android:name="KEYoneService"
+            android:label="KEYone IME"
+            android:permission="android.permission.BIND_INPUT_METHOD" >
+            <intent-filter>
+                <action android:name="android.view.InputMethod" />
+            </intent-filter>
+            <meta-data android:name="android.view.im"
+                android:resource="@xml/method" />
+        </service>
+    </application>
+</manifest>
+<!--
+    manifest > application
+        android:label       Setting > Applications > Manage Applications に表示される文字列
+
+    manifest > application > service
+        android:name        最初に実行されるクラス
+        android:label       アプリ名として表示される文字列
+        android:permission  必要な権限を要求
+                            IMEを作成する場合は、"android.permission.BIND_INPUT_METHOD"
+
+    manifest > application > service > inter-filter > action
+        android:name        他のアプリからインテントを受け取るアクションの文字列
+                            IMEを作成する場合は、"android.view.InputMethod"
+
+    manifest > application > service > meta-data
+        android:name        受け取るインテントを設定
+                            action設定したアクションが受け取れるアイテム名を指定
+                            actionに"InputMethod"を指定した場合は、"android.view.im"
+        android:resource    受け取るインテントの設定?
+
+    インテント = メッセージオブジェクト
+
+-->
