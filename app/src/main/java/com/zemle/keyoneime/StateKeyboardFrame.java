@@ -6,20 +6,20 @@ package com.zemle.keyoneime;
 
 public class StateKeyboardFrame {
     private StateKeyboard mState;
-    private KEYoneService mService;
+    private KeyboardViewQwerty mKeyboardView;
 
     public StateKeyboardFrame() {
         mState = StateKeyboard.Qwerty;
     }
 
-    public void setService(KEYoneService listener) {
-        mService = listener;
+    public void setKeyboardView(KeyboardViewQwerty keyboardview) {
+        mKeyboardView = keyboardview;
     }
 
     public void changeState(StateKeyboard state) {
-        mState.leave(mService);
+        mState.leave(mKeyboardView);
         mState = state;
-        mState.enter(mService);
+        mState.enter(mKeyboardView);
     }
 
     public void pushSoftSYM() {

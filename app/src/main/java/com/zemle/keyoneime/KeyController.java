@@ -36,11 +36,10 @@ public class KeyController {
     public void setService(KEYoneService listener, KeyboardView keyboardview) {
         mService = listener;
         mKeyboardView = keyboardview;
-        mFrame.setService(listener);
+        mFrame.setKeyboardView((KeyboardViewQwerty)keyboardview);
     }
 
     public void onKey(int primaryCode, int[] keyCodes) {
-        InputConnection ic = mService.getCurrentInputConnection();
 
         if (primaryCode == Keyboard.KEYCODE_DELETE) {
             keyDownUp(KeyEvent.KEYCODE_DEL);
@@ -95,7 +94,6 @@ public class KeyController {
     }
 
     public boolean onKeyDown(int keycode, KeyEvent event) {
-        InputConnection ic = mService.getCurrentInputConnection();
         int code;
 
         // SYM : キーボードの切り替え

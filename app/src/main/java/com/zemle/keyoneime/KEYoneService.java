@@ -13,12 +13,7 @@ import android.view.View;
 public class KEYoneService extends InputMethodService {
 
     private KeyboardViewQwerty mQwertyInputView = null;
-    private KeyboardViewSymbol1 mSymbol1InputView = null;
-    private KeyboardViewSymbol2 mSymbol2InputView = null;
-    private KeyboardViewHide mHideInputView = null;
-
     private KeyController mKeyController = null;
-
 
     @Override
     public boolean onEvaluateInputViewShown() {
@@ -28,9 +23,6 @@ public class KEYoneService extends InputMethodService {
     private void createInputView() {
         Context context = getApplicationContext();
         mQwertyInputView = new KeyboardViewQwerty(context, null);
-        mSymbol1InputView = new KeyboardViewSymbol1(context, null);
-        mSymbol2InputView = new KeyboardViewSymbol2(context, null);
-        mHideInputView = new KeyboardViewHide(context, null);
 
         mKeyController = KeyController.getInstance();
         mKeyController.setService(this, mQwertyInputView);
@@ -59,20 +51,4 @@ public class KEYoneService extends InputMethodService {
         super.onFinishInput();
     }
 */
-
-    public void setInputViewQwerty() {
-        setInputView(mQwertyInputView);
-    }
-
-    public void setInputViewSymbol1() {
-        setInputView(mSymbol1InputView);
-    }
-
-    public void setInputViewSymbol2() {
-        setInputView(mSymbol2InputView);
-    }
-
-    public void setInputViewHide() {
-        setInputView(mHideInputView);
-    }
 }

@@ -9,8 +9,8 @@ import android.view.KeyEvent;
 enum StateKeyboard {
     Qwerty {
         @Override
-        public void enter(KEYoneService service) {
-            service.setInputViewQwerty();
+        public void enter(KeyboardViewQwerty keyboardview) {
+            keyboardview.setInputViewQwerty();
         }
 
         @Override
@@ -72,8 +72,8 @@ enum StateKeyboard {
         }
     },
     Symbol1 {
-        public void enter(KEYoneService service) {
-            service.setInputViewSymbol1();
+        public void enter(KeyboardViewQwerty keyboardview) {
+            keyboardview.setInputViewSymbol1();
         }
 
         @Override
@@ -140,8 +140,8 @@ enum StateKeyboard {
         }
     },
     Symbol2 {
-        public void enter(KEYoneService service) {
-            service.setInputViewSymbol2();
+        public void enter(KeyboardViewQwerty keyboardview) {
+            keyboardview.setInputViewSymbol2();
         }
 
         @Override
@@ -208,8 +208,8 @@ enum StateKeyboard {
         }
     },
     HideQwerty {
-        public void enter(KEYoneService service) {
-            service.setInputViewHide();
+        public void enter(KeyboardViewQwerty keyboardview) {
+            keyboardview.setInputViewHide();
         }
 
         @Override
@@ -276,8 +276,8 @@ enum StateKeyboard {
         }
     },
     HideSymbol2 {
-        public void enter(KEYoneService service) {
-            service.setInputViewHide();
+        public void enter(KeyboardViewQwerty keyboardview) {
+            keyboardview.setInputViewHide();
         }
 
         @Override
@@ -345,8 +345,8 @@ enum StateKeyboard {
     },
     ;
 
-    public void leave(KEYoneService service) {}
-    public void enter(KEYoneService service) {}
+    public void leave(KeyboardViewQwerty keyboardview) {}
+    public void enter(KeyboardViewQwerty keyboardview) {}
     public void pushSoftSYM(StateKeyboardFrame context) {}
     public void pushHardSYM(StateKeyboardFrame context) {}
     public void downHardALT(StateKeyboardFrame context) {}

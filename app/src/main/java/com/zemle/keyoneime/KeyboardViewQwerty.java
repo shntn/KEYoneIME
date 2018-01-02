@@ -13,6 +13,9 @@ public class KeyboardViewQwerty extends KeyboardView implements KeyboardView.OnK
     private static final int KEYCODE_QWERTY_CTRL  = -2;
 
     private KEYoneKeyboard mQwertyKeyboard;
+    private KEYoneKeyboard mHideKeyboard;
+    private KEYoneKeyboard mSymbol1Keyboard;
+    private KEYoneKeyboard mSymbol2Keyboard;
     private KeyController mKeyController;
 
     public KeyboardViewQwerty(Context context, AttributeSet attrs) {
@@ -24,6 +27,9 @@ public class KeyboardViewQwerty extends KeyboardView implements KeyboardView.OnK
         // Soft KEYoneKeyboard 押下時にpreview表示を無効化
         setPreviewEnabled(false);
         mQwertyKeyboard = new KEYoneKeyboard(context, R.xml.qwerty);
+        mHideKeyboard = new KEYoneKeyboard(context, R.xml.hide);
+        mSymbol1Keyboard = new KEYoneKeyboard(context, R.xml.symbol1);
+        mSymbol2Keyboard = new KEYoneKeyboard(context, R.xml.symbol2);
         setKeyboard(mQwertyKeyboard);
         setOnKeyboardActionListener(this);
         mKeyController = KeyController.getInstance();
@@ -53,5 +59,21 @@ public class KeyboardViewQwerty extends KeyboardView implements KeyboardView.OnK
     }
 
     public void swipeUp() {
+    }
+
+    public void setInputViewQwerty() {
+        setKeyboard(mQwertyKeyboard);
+    }
+
+    public void setInputViewSymbol1() {
+        setKeyboard(mSymbol1Keyboard);
+    }
+
+    public void setInputViewSymbol2() {
+        setKeyboard(mSymbol2Keyboard);
+    }
+
+    public void setInputViewHide() {
+        setKeyboard(mHideKeyboard);
     }
 }
