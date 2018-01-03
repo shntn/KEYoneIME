@@ -122,7 +122,7 @@ class KeyController {
         // SYM : キーボードの切り替え
         if (keycode == KeyEvent.KEYCODE_SYM) {
             mFrame.pushHardSYM();
-            return false;
+            return true;
         }
 
         // ALT : キーボード切り替え
