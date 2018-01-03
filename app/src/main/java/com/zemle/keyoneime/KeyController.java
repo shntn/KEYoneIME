@@ -7,10 +7,14 @@ import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 
 /**
- * Created by nobu on 2018/01/02.
+ * 入力されたキーに関する処理を行う。
+ * ソフトキーが押された場合は onKey で処理する。
+ * ハードキーが押された場合は onKeyDown, onKeyUp で処理する。
+ *
+ * Created by shntn on 2018/01/02.
  */
 
-public class KeyController {
+class KeyController {
     private static final int KEYCODE_QWERTY_SYM   = -1012;
     private static final int KEYCODE_QWERTY_CTRL  = -2;
     private static final int KEYCODE_QWERTY_UP    = -19;
@@ -34,17 +38,17 @@ public class KeyController {
 
     private KeyController() { }
 
-    public static KeyController getInstance() {
+    static KeyController getInstance() {
         return singleton;
     }
 
-    public void setService(KEYoneService listener, KeyboardView keyboardview) {
+    void setService(KEYoneService listener, KeyboardView keyboardview) {
         mService = listener;
         mKeyboardView = keyboardview;
         mFrame.setKeyboardView((KeyboardViewQwerty)keyboardview);
     }
 
-    public void onKey(int primaryCode, int[] keyCodes) {
+    void onKey(int primaryCode, int[] keyCodes) {
 
         // 画面に定義しているが未実装のキー
         if (primaryCode == KEYCODE_QWERTY_ALT) {
@@ -112,7 +116,7 @@ public class KeyController {
         letter(primaryCode);
     }
 
-    public boolean onKeyDown(int keycode, KeyEvent event) {
+    boolean onKeyDown(int keycode, KeyEvent event) {
         int code;
 
         // SYM : キーボードの切り替え
@@ -190,9 +194,7 @@ public class KeyController {
         return false;
     }
 
-    public boolean onKeyUp(int keycode, KeyEvent event) {
-        InputConnection ic = mService.getCurrentInputConnection();
-        int code;
+    boolean onKeyUp(int keycode, KeyEvent event) {
 
         // ALT : キーボード切り替え
         if (keycode == KeyEvent.KEYCODE_ALT_LEFT) {

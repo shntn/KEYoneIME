@@ -4,7 +4,9 @@ import android.content.Context;
 import android.inputmethodservice.Keyboard;
 
 /**
- * Created by nobu on 2017/12/16.
+ * 必要そうだから作った。よく理解できてない。
+ *
+ * Created by shntn on 2017/12/16.
  */
 
 public class KEYoneKeyboard extends Keyboard {

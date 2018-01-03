@@ -5,12 +5,16 @@ import android.inputmethodservice.KeyboardView;
 import android.util.AttributeSet;
 
 /**
- * Created by nobu on 2017/12/16.
+ * ソフトキーボードの表示、及びソフトキー押下時のイベント受付処理。
+ * ソフトキーボードはQWERTY, SYMBOL1, SYMBOL2 の3タイプを持ち、このクラスで表示切り替えを行う。
+ * ソフトキーが押された場合は、KeyController で処理する。
+ * ソフトキーボードの状態については StateKeyboard で管理。
+ * ソフトキーボード非表示は、キー定義をしてない hide.xml を表示することで対応。
+ *
+ * Created by shntn on 2017/12/16.
  */
 
 public class KeyboardViewQwerty extends KeyboardView implements KeyboardView.OnKeyboardActionListener {
-    private static final int KEYCODE_QWERTY_SYM   = -1012;
-    private static final int KEYCODE_QWERTY_CTRL  = -2;
 
     private KEYoneKeyboard mQwertyKeyboard;
     private KEYoneKeyboard mHideKeyboard;

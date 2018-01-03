@@ -1,52 +1,54 @@
 package com.zemle.keyoneime;
 
 /**
- * Created by nobu on 2018/01/02.
+ * StateKeyboard と共にソフトキーボードの状態を管理
+ *
+ * Created by shntn on 2018/01/02.
  */
 
-public class StateKeyboardFrame {
+class StateKeyboardFrame {
     private StateKeyboard mState;
     private KeyboardViewQwerty mKeyboardView;
 
-    public StateKeyboardFrame() {
+    StateKeyboardFrame() {
         mState = StateKeyboard.Qwerty;
     }
 
-    public void setKeyboardView(KeyboardViewQwerty keyboardview) {
+    void setKeyboardView(KeyboardViewQwerty keyboardview) {
         mKeyboardView = keyboardview;
     }
 
-    public void changeState(StateKeyboard state) {
+    void changeState(StateKeyboard state) {
         mState.leave(mKeyboardView);
         mState = state;
         mState.enter(mKeyboardView);
     }
 
-    public void pushSoftSYM() {
+    void pushSoftSYM() {
         mState.pushSoftSYM(this);
     }
 
-    public void pushHardSYM() {
+    void pushHardSYM() {
         mState.pushHardSYM(this);
     }
 
-    public void downHardALT() {
+    void downHardALT() {
         mState.downHardALT(this);
     }
 
-    public void upHardALT() {
+    void upHardALT() {
         mState.upHardALT(this);
     }
 
-    public StateKeyboard getType() {
+    StateKeyboard getType() {
         return mState.getType();
     }
 
-    public StateKeyboard getState() {
+    StateKeyboard getState() {
         return mState;
     }
 
-    public int convertKeycode(int keycode) {
+    int convertKeycode(int keycode) {
         return mState.converKeycode(keycode);
     }
 }

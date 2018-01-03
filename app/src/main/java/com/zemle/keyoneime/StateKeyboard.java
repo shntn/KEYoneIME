@@ -3,7 +3,11 @@ package com.zemle.keyoneime;
 import android.view.KeyEvent;
 
 /**
- * Created by nobu on 2018/01/02.
+ * ソフトキーボードの表示状態と遷移を管理。
+ * ソフトキーボードが表示されている状態でハードキーが押された場合、
+ * 対応する文字コードを返す。
+ *
+ * Created by shntn on 2018/01/02.
  */
 
 enum StateKeyboard {

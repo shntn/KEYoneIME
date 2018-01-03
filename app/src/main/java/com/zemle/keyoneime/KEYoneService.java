@@ -7,18 +7,13 @@ import android.view.View;
 
 
 /**
- * Created by nobu on 2017/12/16.
+ * Created by shntn on 2017/12/16.
  */
 
 public class KEYoneService extends InputMethodService {
 
     private KeyboardViewQwerty mQwertyInputView = null;
     private KeyController mKeyController = null;
-
-    @Override
-    public boolean onEvaluateInputViewShown() {
-        return true;
-    }
 
     private void createInputView() {
         Context context = getApplicationContext();
@@ -32,7 +27,7 @@ public class KEYoneService extends InputMethodService {
     public View onCreateInputView() {
         createInputView();
 
-        return mQwertyInputView;
+        return mQwertyInputView;    // StateKeyboardFrameのコンストラクタでの設定と対応させること
     }
 
     @Override
