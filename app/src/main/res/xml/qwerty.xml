@@ -33,10 +33,11 @@ KEYoneKeyboardoard > Row > Key
 -->
 <Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
     android:keyWidth="10%p"
-    android:horizontalGap="0px"
-    android:verticalGap="0px"
-    android:keyHeight="@dimen/key_height"
+    android:horizontalGap="0dip"
+    android:verticalGap="0dip"
+	android:keyHeight="@dimen/key_height"
     >
+
     <Row>
         <Key android:codes="113" android:keyLabel="q" android:keyEdgeFlags="left"/>
         <Key android:codes="119" android:keyLabel="w"/>
@@ -59,16 +60,13 @@ KEYoneKeyboardoard > Row > Key
         <Key android:codes="104" android:keyLabel="h"/>
         <Key android:codes="106" android:keyLabel="j"/>
         <Key android:codes="107" android:keyLabel="k"/>
-        <Key android:codes="108" android:keyLabel="l"/>
-        <Key android:codes="@integer/key_delete" android:keyIcon="@drawable/sym_keyboard_delete"
-            android:keyEdgeFlags="right"
-            android:isRepeatable="true"/>
+        <Key android:codes="108" android:keyLabel="l" android:keyEdgeFlags="right"/>
     </Row>
 
     <Row>
         <Key android:codes="@integer/key_shift" android:keyIcon="@drawable/sym_keyboard_shift"
-            android:isModifier="true"
-            android:isSticky="true" android:keyEdgeFlags="left"/>
+                android:isModifier="true"
+                android:isSticky="true" android:keyEdgeFlags="left"/>
         <Key android:codes="122" android:keyLabel="z"/>
         <Key android:codes="120" android:keyLabel="x"/>
         <Key android:codes="99" android:keyLabel="c"/>
@@ -77,23 +75,20 @@ KEYoneKeyboardoard > Row > Key
         <Key android:codes="110" android:keyLabel="n"/>
         <Key android:codes="109" android:keyLabel="m"/>
         <Key android:codes="36" android:keyLabel="$"/>
-        <Key android:codes="@integer/key_enter" android:keyIcon="@drawable/sym_keyboard_return"
-            android:keyEdgeFlags="right" />
+        <Key android:codes="@integer/key_delete" android:keyIcon="@drawable/sym_keyboard_delete"
+                android:keyEdgeFlags="right"
+                android:isRepeatable="true"/>
     </Row>
 
     <Row android:rowEdgeFlags="bottom">
-        <Key android:codes="@integer/key_alt_left" android:keyLabel="alt" android:keyEdgeFlags="left"/>
-        <Key android:codes="@integer/key_ctrl_left" android:keyLabel="Ctrl"
-            android:isModifier="true"/>
-        <!--
-            android:codes: -101 is not a framework-defined key code but a key code that is
-            privately defined in com.example.android.softkeyboard.LatinKeyboardView.
-        -->
-        <Key android:codes="-101" android:keyLabel="ABC" />
+        <Key android:codes="-1008" android:keyLabel="JP"
+                android:keyWidth="20%p" android:keyEdgeFlags="left"/>
+        <Key android:codes="@integer/key_ctrl_left" android:keyLabel="Ctrl" android:keyWidth="15%p"/>
         <Key android:codes="@integer/key_space" android:keyIcon="@drawable/sym_keyboard_space"
-            android:keyWidth="40%p" android:isRepeatable="true"/>
-        <Key android:codes="@integer/key_sym" android:keyLabel="SYM" />
-        <Key android:codes="-4" android:keyLabel="done"
-            android:keyWidth="20%p" android:keyEdgeFlags="right"/>
+                android:keyWidth="30%p" android:isRepeatable="true"/>
+        <Key android:codes="@integer/key_sym" android:keyLabel="SYM"
+                android:keyWidth="15%p"/>
+        <Key android:codes="@integer/key_enter" android:keyIcon="@drawable/sym_keyboard_return"
+                android:keyWidth="20%p" android:keyEdgeFlags="right"/>
     </Row>
 </Keyboard>
