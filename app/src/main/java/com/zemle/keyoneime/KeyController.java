@@ -103,10 +103,13 @@ public class KeyController {
             return;
         }
 
-        ctrl_moji(primaryCode);
         if (ctrl) {
+            ctrl_moji(primaryCode);
             ctrl = false;
+            return;
         }
+
+        letter(primaryCode);
     }
 
     public boolean onKeyDown(int keycode, KeyEvent event) {
@@ -172,9 +175,19 @@ public class KeyController {
             return true;
         }
 
-        // 文字キー
-        ctrl_moji(code);
-        return true;
+        // CTRL + LowerCase
+        if (ctrl) {
+            ctrl_moji(code);
+            ctrl = false;
+            return true;
+        }
+
+        if (isHardKey(keycode)) {
+            letter(code);
+            return true;
+        }
+
+        return false;
     }
 
     public boolean onKeyUp(int keycode, KeyEvent event) {
@@ -201,120 +214,163 @@ public class KeyController {
             return false;
         }
 
-        return true;
+        return false;
+    }
+
+    private boolean isHardKey(int primaryCode) {
+        boolean result = false;
+
+        switch(primaryCode) {
+            case KeyEvent.KEYCODE_Q: result = true; break;
+            case KeyEvent.KEYCODE_W: result = true; break;
+            case KeyEvent.KEYCODE_E: result = true; break;
+            case KeyEvent.KEYCODE_R: result = true; break;
+            case KeyEvent.KEYCODE_T: result = true; break;
+            case KeyEvent.KEYCODE_Y: result = true; break;
+            case KeyEvent.KEYCODE_U: result = true; break;
+            case KeyEvent.KEYCODE_I: result = true; break;
+            case KeyEvent.KEYCODE_O: result = true; break;
+            case KeyEvent.KEYCODE_P: result = true; break;
+
+            case KeyEvent.KEYCODE_A: result = true; break;
+            case KeyEvent.KEYCODE_S: result = true; break;
+            case KeyEvent.KEYCODE_D: result = true; break;
+            case KeyEvent.KEYCODE_F: result = true; break;
+            case KeyEvent.KEYCODE_G: result = true; break;
+            case KeyEvent.KEYCODE_H: result = true; break;
+            case KeyEvent.KEYCODE_J: result = true; break;
+            case KeyEvent.KEYCODE_K: result = true; break;
+            case KeyEvent.KEYCODE_L: result = true; break;
+            case KeyEvent.KEYCODE_DEL: result = true; break;
+
+            case KeyEvent.KEYCODE_ALT_LEFT: result = true; break;
+            case KeyEvent.KEYCODE_Z: result = true; break;
+            case KeyEvent.KEYCODE_X: result = true; break;
+            case KeyEvent.KEYCODE_C: result = true; break;
+            case KeyEvent.KEYCODE_V: result = true; break;
+            case KeyEvent.KEYCODE_B: result = true; break;
+            case KeyEvent.KEYCODE_N: result = true; break;
+            case KeyEvent.KEYCODE_M: result = true; break;
+            case KeyEvent.KEYCODE_4: result = true; break;
+            case KeyEvent.KEYCODE_ENTER: result = true; break;
+
+            case KeyEvent.KEYCODE_SHIFT_LEFT: result = true; break;
+            case KeyEvent.KEYCODE_0: result = true; break;
+            case KeyEvent.KEYCODE_SPACE: result = true; break;
+            case KeyEvent.KEYCODE_SYM: result = true; break;
+            case KeyEvent.KEYCODE_SHIFT_RIGHT: result = true; break;
+        }
+        return result;
     }
 
     private void ctrl_moji(int primaryCode) {
-        if (ctrl) {
-            switch ((char)primaryCode) {
-                case 'a':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_A, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'b':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_B, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'c':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_C, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'd':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_D, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'e':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_E, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'f':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_F, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'g':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_G, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'h':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_H, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'i':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_I, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'j':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_J, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'k':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_K, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'l':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_L, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'm':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_M, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'n':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_N, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'o':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_O, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'p':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_P, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'q':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_Q, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'r':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_R, KeyEvent.META_CTRL_ON);
-                    break;
-                case 's':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_S, KeyEvent.META_CTRL_ON);
-                    break;
-                case 't':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_T, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'u':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_U, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'v':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'w':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_W, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'x':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_X, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'y':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_Y, KeyEvent.META_CTRL_ON);
-                    break;
-                case 'z':
-                    sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_Z, KeyEvent.META_CTRL_ON);
-                    break;
-                default:
-                    if (shift) {
-                        primaryCode = Character.toUpperCase(primaryCode);
-                    }
-                    pressText(primaryCode);
-                    break;
-            }
-        } else if (shift) {
-            primaryCode = Character.toUpperCase(primaryCode);
-            pressText(primaryCode);
-        } else {
-            pressText(primaryCode);
+        switch ((char)primaryCode) {
+            case 'a':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_A, KeyEvent.META_CTRL_ON);
+                break;
+            case 'b':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_B, KeyEvent.META_CTRL_ON);
+                break;
+            case 'c':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_C, KeyEvent.META_CTRL_ON);
+                break;
+            case 'd':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_D, KeyEvent.META_CTRL_ON);
+                break;
+            case 'e':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_E, KeyEvent.META_CTRL_ON);
+                break;
+            case 'f':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_F, KeyEvent.META_CTRL_ON);
+                break;
+            case 'g':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_G, KeyEvent.META_CTRL_ON);
+                break;
+            case 'h':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_H, KeyEvent.META_CTRL_ON);
+                break;
+            case 'i':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_I, KeyEvent.META_CTRL_ON);
+                break;
+            case 'j':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_J, KeyEvent.META_CTRL_ON);
+                break;
+            case 'k':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_K, KeyEvent.META_CTRL_ON);
+                break;
+            case 'l':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_L, KeyEvent.META_CTRL_ON);
+                break;
+            case 'm':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_M, KeyEvent.META_CTRL_ON);
+                break;
+            case 'n':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_N, KeyEvent.META_CTRL_ON);
+                break;
+            case 'o':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_O, KeyEvent.META_CTRL_ON);
+                break;
+            case 'p':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_P, KeyEvent.META_CTRL_ON);
+                break;
+            case 'q':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_Q, KeyEvent.META_CTRL_ON);
+                break;
+            case 'r':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_R, KeyEvent.META_CTRL_ON);
+                break;
+            case 's':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_S, KeyEvent.META_CTRL_ON);
+                break;
+            case 't':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_T, KeyEvent.META_CTRL_ON);
+                break;
+            case 'u':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_U, KeyEvent.META_CTRL_ON);
+                break;
+            case 'v':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON);
+                break;
+            case 'w':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_W, KeyEvent.META_CTRL_ON);
+                break;
+            case 'x':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_X, KeyEvent.META_CTRL_ON);
+                break;
+            case 'y':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_Y, KeyEvent.META_CTRL_ON);
+                break;
+            case 'z':
+                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_Z, KeyEvent.META_CTRL_ON);
+                break;
+            default:
+                letter(primaryCode);
+                break;
         }
     }
 
-    void keyDownUp(int keyEventCode) {
+    private void keyDownUp(int keyEventCode) {
         InputConnection ic = mService.getCurrentInputConnection();
         if (ic == null) { return; }
         ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, keyEventCode));
         ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP,   keyEventCode));
     }
 
-    void pressText(int primaryCode) {
+    private void letter(int primaryCode) {
+        if (shift) {
+            primaryCode = Character.toUpperCase(primaryCode);
+        }
+        pressText(primaryCode);
+    }
+
+    private void pressText(int primaryCode) {
         mService.getCurrentInputConnection().commitText(
             String.valueOf((char) primaryCode),
             1
         );
     }
 
-    void sendKey(int action, int code, int meta) {
+    private void sendKey(int action, int code, int meta) {
         long now = System.currentTimeMillis();
         InputConnection ic = mService.getCurrentInputConnection();
 
