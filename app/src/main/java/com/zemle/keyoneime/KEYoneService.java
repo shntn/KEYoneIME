@@ -32,12 +32,24 @@ public class KEYoneService extends InputMethodService {
 
     @Override
     public boolean onKeyDown(int keycode, KeyEvent event) {
-        return mKeyController.onKeyDown(keycode, event);
+        boolean status;
+
+        status = mKeyController.onKeyDown(keycode, event);
+        if (status) {
+            return true;
+        }
+        return super.onKeyDown(keycode, event);
     }
 
     @Override
     public boolean onKeyUp(int keycode, KeyEvent event) {
-        return mKeyController.onKeyUp(keycode, event);
+        boolean status;
+
+        status = mKeyController.onKeyUp(keycode, event);
+        if (status) {
+            return true;
+        }
+        return super.onKeyUp(keycode, event);
     }
 
 /*

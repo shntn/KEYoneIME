@@ -31,6 +31,7 @@ class KeyController {
     private KEYoneService mService;
     private KeyboardView mKeyboardView;
     private StateKeyboardFrame mFrame = new StateKeyboardFrame();
+    private StateMetaKey mStateMetaKey;
 
     // 状態変数
     private static boolean shift = false;
@@ -46,9 +47,11 @@ class KeyController {
         mService = listener;
         mKeyboardView = keyboardview;
         mFrame.setKeyboardView((KeyboardViewQwerty)keyboardview);
+        mStateMetaKey = new StateMetaKey(this);
     }
 
     void onKey(int primaryCode, int[] keyCodes) {
+        int metaStates;
 
         // 画面に定義しているが未実装のキー
         if (primaryCode == KEYCODE_QWERTY_ALT) {
@@ -61,28 +64,37 @@ class KeyController {
             return;
         }
 
+        // special key
+        if (primaryCode == Keyboard.KEYCODE_SHIFT) {
+            if (mStateMetaKey.isPress(StateMetaKey.MetaKey.SHIFT_KEY)) {
+                mStateMetaKey.releaseMetaKey(StateMetaKey.MetaKey.SHIFT_KEY);
+                mKeyboardView.setShifted(false);
+            } else {
+                mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.SHIFT_KEY);
+                mKeyboardView.setShifted(true);
+            }
+            return;
+        }
+
+        if (primaryCode == KEYCODE_QWERTY_CTRL) {
+            if (mStateMetaKey.isPress(StateMetaKey.MetaKey.CTRL_KEY)) {
+                mStateMetaKey.releaseMetaKey(StateMetaKey.MetaKey.CTRL_KEY);
+            } else {
+                mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.CTRL_KEY);
+            }
+            return;
+        }
+
         if (primaryCode == Keyboard.KEYCODE_DELETE) {
             keyDownUp(KeyEvent.KEYCODE_DEL);
             return;
         }
 
-        if (primaryCode == Keyboard.KEYCODE_SHIFT) {
-            shift = !shift;
-            mKeyboardView.setShifted(shift);
-            return;
-        }
-
         if (primaryCode == KEYCODE_QWERTY_SYM) {
             mFrame.pushSoftSYM();
-            return;
-        }
-
-        if (primaryCode == KEYCODE_QWERTY_CTRL) {
-            ctrl = !ctrl;
-            if (ctrl) {
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.META_CTRL_ON);
-            } else {
-                sendKey(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.META_CTRL_ON);
+            if (mFrame.getState() == StateKeyboard.Symbol2) {
+                mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.ALT_KEY);
+                mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.ALT_KEY);
             }
             return;
         }
@@ -107,17 +119,25 @@ class KeyController {
             return;
         }
 
-        if (ctrl) {
+        metaStates = mStateMetaKey.useMetaState();
+
+        // CTRL + LowerCase
+        if ((metaStates & KeyEvent.META_CTRL_ON) != 0) {
             ctrl_moji(primaryCode);
-            ctrl = false;
             return;
         }
 
-        letter(primaryCode);
+        if ((metaStates & KeyEvent.META_SHIFT_ON) != 0) {
+            primaryCode = Character.toUpperCase(primaryCode);
+        }
+        pressText(primaryCode);
+        return;
+
     }
 
     boolean onKeyDown(int keycode, KeyEvent event) {
         int code;
+        int metaStates;
 
         // SYM : キーボードの切り替え
         if (keycode == KeyEvent.KEYCODE_SYM) {
@@ -127,21 +147,21 @@ class KeyController {
 
         // ALT : キーボード切り替え
         if (keycode == KeyEvent.KEYCODE_ALT_LEFT) {
+            mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.ALT_KEY);
             mFrame.downHardALT();
             return false;
         }
 
         // SHIFT_LEFT : Ctrl
         if (keycode == KeyEvent.KEYCODE_SHIFT_LEFT) {
-            ctrl = true;
-            sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.META_CTRL_ON);
+            mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.CTRL_KEY);
             return true;
         }
 
         // SHIFT_RIGHT : SHIFT
         if (keycode == KeyEvent.KEYCODE_SHIFT_RIGHT) {
-            shift = true;
-            mKeyboardView.setShifted(shift);
+            mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.SHIFT_KEY);
+            mKeyboardView.setShifted(true);
             return false;
         }
 
@@ -179,15 +199,19 @@ class KeyController {
             return true;
         }
 
+        metaStates = mStateMetaKey.useMetaState();
+
         // CTRL + LowerCase
-        if (ctrl) {
+        if ((metaStates & KeyEvent.META_CTRL_ON) != 0) {
             ctrl_moji(code);
-            ctrl = false;
             return true;
         }
 
         if (isHardKey(keycode)) {
-            letter(code);
+            if ((metaStates & KeyEvent.META_SHIFT_ON) != 0) {
+                code = Character.toUpperCase(code);
+            }
+            pressText(code);
             return true;
         }
 
@@ -196,23 +220,41 @@ class KeyController {
 
     boolean onKeyUp(int keycode, KeyEvent event) {
 
+        // ALTキーを押下中でもonKeyUpのイベントが発生する対策
+        if ((keycode == KeyEvent.KEYCODE_ALT_LEFT)
+                && event.isAltPressed()) {
+            return true;
+        }
+
+        // ソフトキーボードの表示を更新
+        if (keycode != KeyEvent.KEYCODE_SYM) {
+            // ALT : ソフトキーボードの表示切り替え
+            if (!mStateMetaKey.isPress(StateMetaKey.MetaKey.ALT_KEY)) {
+                mFrame.upHardALT();
+            }
+
+            // SHIFT : SHIFTキーのインジケータを更新
+            if (!mStateMetaKey.isPress(StateMetaKey.MetaKey.SHIFT_KEY)) {
+                mKeyboardView.setShifted(false);
+            }
+        }
+
         // ALT : キーボード切り替え
-        if (keycode == KeyEvent.KEYCODE_ALT_LEFT) {
-            mFrame.upHardALT();
-            return false;
+        if ((keycode == KeyEvent.KEYCODE_ALT_LEFT)
+                || (keycode == KeyEvent.KEYCODE_ALT_RIGHT)) {
+            mStateMetaKey.releaseMetaKey(StateMetaKey.MetaKey.ALT_KEY);
+            return true;
         }
 
         // SHIFT_LEFT : CTRL
         if (keycode == KeyEvent.KEYCODE_SHIFT_LEFT) {
-            ctrl = false;
-            sendKey(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_CTRL_LEFT, KeyEvent.META_CTRL_ON);
+            mStateMetaKey.releaseMetaKey(StateMetaKey.MetaKey.CTRL_KEY);
             return true;
         }
 
         // SHIFT_RIGHT : SHIFT
         if (keycode == KeyEvent.KEYCODE_SHIFT_RIGHT) {
-            shift = false;
-            mKeyboardView.setShifted(shift);
+            mStateMetaKey.releaseMetaKey(StateMetaKey.MetaKey.SHIFT_KEY);
             return false;
         }
 
@@ -351,6 +393,20 @@ class KeyController {
         }
     }
 
+    void sendKey(int action, int code) {
+        InputConnection ic = mService.getCurrentInputConnection();
+
+        if (ic == null) { return; }
+        ic.sendKeyEvent(new KeyEvent(action, code));
+    }
+
+    void clearMetaKey(int states) {
+        InputConnection ic = mService.getCurrentInputConnection();
+        if (ic != null) {
+            ic.clearMetaKeyStates(states);
+        }
+    }
+
     private void keyDownUp(int keyEventCode) {
         InputConnection ic = mService.getCurrentInputConnection();
         if (ic == null) { return; }
@@ -367,8 +423,8 @@ class KeyController {
 
     private void pressText(int primaryCode) {
         mService.getCurrentInputConnection().commitText(
-            String.valueOf((char) primaryCode),
-            1
+                String.valueOf((char) primaryCode),
+                1
         );
     }
 
