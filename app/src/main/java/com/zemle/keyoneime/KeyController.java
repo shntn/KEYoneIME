@@ -86,6 +86,11 @@ class KeyController {
         } else if (primaryCode == KEYCODE_QWERTY_CTRL) {
             mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.CTRL_KEY);
             mStateMetaKey.releaseMetaKey(StateMetaKey.MetaKey.CTRL_KEY);
+            if (mStateMetaKey.isPress(StateMetaKey.MetaKey.CTRL_KEY)) {
+                ((KeyboardViewQwerty)mKeyboardView).setCtrl(true);
+            } else {
+                ((KeyboardViewQwerty)mKeyboardView).setCtrl(false);
+            }
 
         // DELETE :
         } else if (primaryCode == Keyboard.KEYCODE_DELETE) {
@@ -129,12 +134,14 @@ class KeyController {
             }
 
             // ソフトキーボードのインジケータを更新
+            if (!mStateMetaKey.isPress(StateMetaKey.MetaKey.CTRL_KEY)) {
+                ((KeyboardViewQwerty)mKeyboardView).setCtrl(false);
+            }
             if (!mStateMetaKey.isPress(StateMetaKey.MetaKey.SHIFT_KEY)) {
                 mKeyboardView.setShifted(false);
             }
 
         }
-        return;
     }
 
     boolean onKeyDown(int keycode, KeyEvent event) {
@@ -162,6 +169,7 @@ class KeyController {
         if (keycode == KeyEvent.KEYCODE_SHIFT_LEFT) {
             if (event.getRepeatCount() == 0) {
                 mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.CTRL_KEY);
+                ((KeyboardViewQwerty)mKeyboardView).setCtrl(true);
                 return true;
             } else {
                 return true;
@@ -263,6 +271,11 @@ class KeyController {
             // ALT : ソフトキーボードの表示切り替え
             if (!mStateMetaKey.isPress(StateMetaKey.MetaKey.ALT_KEY)) {
                 mFrame.upHardALT();
+            }
+
+            // CTRL : CTRLキーのインジケータを更新
+            if (!mStateMetaKey.isPress(StateMetaKey.MetaKey.CTRL_KEY)) {
+                ((KeyboardViewQwerty)mKeyboardView).setCtrl(false);
             }
 
             // SHIFT : SHIFTキーのインジケータを更新

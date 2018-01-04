@@ -83,7 +83,8 @@ KEYoneKeyboardoard > Row > Key
     <Row android:rowEdgeFlags="bottom">
         <Key android:codes="-1008" android:keyLabel="JP"
                 android:keyWidth="20%p" android:keyEdgeFlags="left"/>
-        <Key android:codes="@integer/key_ctrl_left" android:keyLabel="Ctrl" android:keyWidth="15%p"/>
+        <Key android:codes="@integer/key_ctrl_left" android:keyLabel="Ctrl" android:keyWidth="15%p"
+                android:isSticky="true"/>
         <Key android:codes="@integer/key_space" android:keyIcon="@drawable/sym_keyboard_space"
                 android:keyWidth="30%p" android:isRepeatable="true"/>
         <Key android:codes="@integer/key_sym" android:keyLabel="SYM"

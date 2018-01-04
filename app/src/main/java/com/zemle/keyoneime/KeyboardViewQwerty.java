@@ -1,8 +1,11 @@
 package com.zemle.keyoneime;
 
 import android.content.Context;
+import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.util.AttributeSet;
+
+import java.util.List;
 
 /**
  * ソフトキーボードの表示、及びソフトキー押下時のイベント受付処理。
@@ -15,6 +18,7 @@ import android.util.AttributeSet;
  */
 
 public class KeyboardViewQwerty extends KeyboardView implements KeyboardView.OnKeyboardActionListener {
+    private static final int KEYCODE_QWERTY_CTRL  = -2;
 
     private KoimeKeyboard mQwertyKeyboard;
     private KoimeKeyboard mHideKeyboard;
@@ -79,5 +83,23 @@ public class KeyboardViewQwerty extends KeyboardView implements KeyboardView.OnK
 
     public void setInputViewHide() {
         setKeyboard(mHideKeyboard);
+    }
+
+    public void setSticky(int keyCode, boolean state) {
+        int i = 0;
+        List<Keyboard.Key> mKeyboardViewKeys = mQwertyKeyboard.getKeys();
+
+        for (Keyboard.Key key : mKeyboardViewKeys) {
+            if (key.codes[0] == keyCode) {
+                key.on = state;
+                break;
+            }
+            i++;
+        }
+        invalidateKey(i);
+    }
+
+    public void setCtrl(boolean state) {
+        setSticky(KEYCODE_QWERTY_CTRL, state);
     }
 }
