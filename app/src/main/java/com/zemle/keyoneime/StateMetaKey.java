@@ -6,7 +6,7 @@ import java.util.EnumMap;
 
 class StateMetaKey {
     enum MetaKey {SHIFT_KEY, ALT_KEY, CTRL_KEY}
-    private enum MetaKeyState {STATE_NONE, STATE_ON, STATE_LOCKED}
+    private enum MetaKeyState {STATE_NONE, STATE_ON, STATE_HALF_LOCKED, STATE_LOCKED}
 
     private static final EnumMap<MetaKey, Integer> KEYCODES = new EnumMap<>(MetaKey.class);
     private static final EnumMap<MetaKey, Integer> MASK_STATES = new EnumMap<>(MetaKey.class);
@@ -65,6 +65,36 @@ class StateMetaKey {
                 mState.put(key, MetaKeyState.STATE_LOCKED);
                 // on -> locked
                 break;
+            case STATE_HALF_LOCKED:
+                mState.put(key, MetaKeyState.STATE_LOCKED);
+                // half_locked -> locked
+                break;
+            case STATE_LOCKED:
+                mState.put(key, MetaKeyState.STATE_NONE);
+                // locked -> off
+                break;
+        }
+    }
+
+    void pressSoftMetaKey(MetaKey key) {
+        mKeyCtrl.sendKey(KeyEvent.ACTION_DOWN, KEYCODES.get(key));
+        mKeyCtrl.sendKey(KeyEvent.ACTION_UP, KEYCODES.get(key));
+
+        isPressed.put(key, false);
+        isUsed.put(key, false);
+        switch (mState.get(key)) {
+            case STATE_NONE:
+                mState.put(key, MetaKeyState.STATE_HALF_LOCKED);
+                // off -> half_locked
+                break;
+            case STATE_ON:
+                mState.put(key, MetaKeyState.STATE_NONE);
+                // on -> off
+                break;
+            case STATE_HALF_LOCKED:
+                mState.put(key, MetaKeyState.STATE_NONE);
+                // half_locked -> off
+                break;
             case STATE_LOCKED:
                 mState.put(key, MetaKeyState.STATE_NONE);
                 // locked -> off
@@ -109,6 +139,9 @@ class StateMetaKey {
             case STATE_ON:
                 status = true;
                 break;
+            case STATE_HALF_LOCKED:
+                status = true;
+                break;
             case STATE_LOCKED:
                 status = true;
                 break;
@@ -132,6 +165,9 @@ class StateMetaKey {
                     mKeyCtrl.clearMetaKey(MASK_STATES.get(key));
                     // on -> off
                 }
+                status = true;
+                break;
+            case STATE_HALF_LOCKED:
                 status = true;
                 break;
             case STATE_LOCKED:
