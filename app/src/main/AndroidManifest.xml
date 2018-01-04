@@ -1,9 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zemle.keyoneime">
 
-    <application android:label="Koime">
+    <application android:label="Koime"
+        android:icon="@drawable/ic_launcher">
         <service android:name="KoimeService"
             android:label="Koime"
+            android:icon="@drawable/ic_launcher"
             android:permission="android.permission.BIND_INPUT_METHOD" >
             <intent-filter>
                 <action android:name="android.view.InputMethod" />
