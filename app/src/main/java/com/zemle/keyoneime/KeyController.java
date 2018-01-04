@@ -84,11 +84,8 @@ class KeyController {
 
         // CTRL :
         } else if (primaryCode == KEYCODE_QWERTY_CTRL) {
-            if (mStateMetaKey.isPress(StateMetaKey.MetaKey.CTRL_KEY)) {
-                mStateMetaKey.releaseMetaKey(StateMetaKey.MetaKey.CTRL_KEY);
-            } else {
-                mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.CTRL_KEY);
-            }
+            mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.CTRL_KEY);
+            mStateMetaKey.releaseMetaKey(StateMetaKey.MetaKey.CTRL_KEY);
 
         // DELETE :
         } else if (primaryCode == Keyboard.KEYCODE_DELETE) {
