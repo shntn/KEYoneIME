@@ -10,7 +10,7 @@ import android.view.View;
  * Created by shntn on 2017/12/16.
  */
 
-public class KEYoneService extends InputMethodService {
+public class KoimeService extends InputMethodService {
 
     private KeyboardViewQwerty mQwertyInputView = null;
     private KeyController mKeyController = null;

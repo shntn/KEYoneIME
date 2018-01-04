@@ -1,6 +1,5 @@
 package com.zemle.keyoneime;
 
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.InputConnection;
 import android.inputmethodservice.Keyboard;
@@ -28,7 +27,7 @@ class KeyController {
 
 
     private static KeyController singleton = new KeyController();
-    private KEYoneService mService;
+    private KoimeService mService;
     private KeyboardView mKeyboardView;
     private StateKeyboardFrame mFrame = new StateKeyboardFrame();
     private StateMetaKey mStateMetaKey;
@@ -43,7 +42,7 @@ class KeyController {
         return singleton;
     }
 
-    void setService(KEYoneService listener, KeyboardView keyboardview) {
+    void setService(KoimeService listener, KeyboardView keyboardview) {
         mService = listener;
         mKeyboardView = keyboardview;
         mFrame.setKeyboardView((KeyboardViewQwerty)keyboardview);

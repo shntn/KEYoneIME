@@ -16,10 +16,10 @@ import android.util.AttributeSet;
 
 public class KeyboardViewQwerty extends KeyboardView implements KeyboardView.OnKeyboardActionListener {
 
-    private KEYoneKeyboard mQwertyKeyboard;
-    private KEYoneKeyboard mHideKeyboard;
-    private KEYoneKeyboard mSymbol1Keyboard;
-    private KEYoneKeyboard mSymbol2Keyboard;
+    private KoimeKeyboard mQwertyKeyboard;
+    private KoimeKeyboard mHideKeyboard;
+    private KoimeKeyboard mSymbol1Keyboard;
+    private KoimeKeyboard mSymbol2Keyboard;
     private KeyController mKeyController;
 
     public KeyboardViewQwerty(Context context, AttributeSet attrs) {
@@ -28,12 +28,12 @@ public class KeyboardViewQwerty extends KeyboardView implements KeyboardView.OnK
     }
 
     private void setup(Context context) {
-        // Soft KEYoneKeyboard 押下時にpreview表示を無効化
+        // Soft KoimeKeyboard 押下時にpreview表示を無効化
         setPreviewEnabled(false);
-        mQwertyKeyboard = new KEYoneKeyboard(context, R.xml.qwerty);
-        mHideKeyboard = new KEYoneKeyboard(context, R.xml.hide);
-        mSymbol1Keyboard = new KEYoneKeyboard(context, R.xml.symbol1);
-        mSymbol2Keyboard = new KEYoneKeyboard(context, R.xml.symbol2);
+        mQwertyKeyboard = new KoimeKeyboard(context, R.xml.qwerty);
+        mHideKeyboard = new KoimeKeyboard(context, R.xml.hide);
+        mSymbol1Keyboard = new KoimeKeyboard(context, R.xml.symbol1);
+        mSymbol2Keyboard = new KoimeKeyboard(context, R.xml.symbol2);
         setKeyboard(mQwertyKeyboard);
         setOnKeyboardActionListener(this);
         mKeyController = KeyController.getInstance();

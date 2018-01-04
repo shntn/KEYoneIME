@@ -9,9 +9,9 @@ import android.inputmethodservice.Keyboard;
  * Created by shntn on 2017/12/16.
  */
 
-public class KEYoneKeyboard extends Keyboard {
+public class KoimeKeyboard extends Keyboard {
 
-    public KEYoneKeyboard(Context context, int xmlLayoutResId) {
+    public KoimeKeyboard(Context context, int xmlLayoutResId) {
         super(context, xmlLayoutResId);
     }
 }
