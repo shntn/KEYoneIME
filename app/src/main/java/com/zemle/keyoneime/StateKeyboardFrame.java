@@ -47,8 +47,4 @@ class StateKeyboardFrame {
     StateKeyboard getState() {
         return mState;
     }
-
-    int convertKeycode(int keycode) {
-        return mState.converKeycode(keycode);
-    }
 }

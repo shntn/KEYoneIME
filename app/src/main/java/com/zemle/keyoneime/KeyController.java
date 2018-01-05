@@ -1,9 +1,12 @@
 package com.zemle.keyoneime;
 
+import android.content.Context;
 import android.view.KeyEvent;
 import android.view.inputmethod.InputConnection;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+
+import java.util.Locale;
 
 /**
  * 入力されたキーに関する処理を行う。
@@ -31,6 +34,7 @@ class KeyController {
     private KeyboardView mKeyboardView;
     private StateKeyboardFrame mFrame = new StateKeyboardFrame();
     private StateMetaKey mStateMetaKey;
+    private KeyCode mKeyCode;
 
     // 状態変数
     private static boolean shift = false;
@@ -42,11 +46,12 @@ class KeyController {
         return singleton;
     }
 
-    void setService(KoimeService listener, KeyboardView keyboardview) {
+    void setService(Context context, KoimeService listener, KeyboardView keyboardview) {
         mService = listener;
         mKeyboardView = keyboardview;
         mFrame.setKeyboardView((KeyboardViewQwerty)keyboardview);
         mStateMetaKey = new StateMetaKey(this);
+        mKeyCode = new KeyCode(context, mFrame);
     }
 
     void onKey(int primaryCode, int[] keyCodes) {
@@ -148,6 +153,7 @@ class KeyController {
         int code;
         int metaStates;
 
+
         // SYM : キーボードの切り替え
         if (keycode == KeyEvent.KEYCODE_SYM) {
             mFrame.pushHardSYM();
@@ -202,7 +208,7 @@ class KeyController {
             mFrame.downHardALT();
         }
 
-        code = mFrame.convertKeycode(keycode);
+        code = mKeyCode.convert(keycode);
 
         if (code == KEYCODE_QWERTY_UP) {
             keyDownUp(KeyEvent.KEYCODE_DPAD_UP);
@@ -229,7 +235,7 @@ class KeyController {
             return true;
         }
 
-        if (isHardKey(keycode)) {
+        if (mKeyCode.isHardKey(keycode)) {
             if ((metaStates & KeyEvent.META_SHIFT_ON) != 0) {
                 code = Character.toUpperCase(code);
             }
@@ -284,52 +290,6 @@ class KeyController {
             }
         }
 
-        return result;
-    }
-
-    private boolean isHardKey(int primaryCode) {
-        boolean result = false;
-
-        switch(primaryCode) {
-            case KeyEvent.KEYCODE_Q: result = true; break;
-            case KeyEvent.KEYCODE_W: result = true; break;
-            case KeyEvent.KEYCODE_E: result = true; break;
-            case KeyEvent.KEYCODE_R: result = true; break;
-            case KeyEvent.KEYCODE_T: result = true; break;
-            case KeyEvent.KEYCODE_Y: result = true; break;
-            case KeyEvent.KEYCODE_U: result = true; break;
-            case KeyEvent.KEYCODE_I: result = true; break;
-            case KeyEvent.KEYCODE_O: result = true; break;
-            case KeyEvent.KEYCODE_P: result = true; break;
-
-            case KeyEvent.KEYCODE_A: result = true; break;
-            case KeyEvent.KEYCODE_S: result = true; break;
-            case KeyEvent.KEYCODE_D: result = true; break;
-            case KeyEvent.KEYCODE_F: result = true; break;
-            case KeyEvent.KEYCODE_G: result = true; break;
-            case KeyEvent.KEYCODE_H: result = true; break;
-            case KeyEvent.KEYCODE_J: result = true; break;
-            case KeyEvent.KEYCODE_K: result = true; break;
-            case KeyEvent.KEYCODE_L: result = true; break;
-            case KeyEvent.KEYCODE_DEL: result = true; break;
-
-            case KeyEvent.KEYCODE_ALT_LEFT: result = true; break;
-            case KeyEvent.KEYCODE_Z: result = true; break;
-            case KeyEvent.KEYCODE_X: result = true; break;
-            case KeyEvent.KEYCODE_C: result = true; break;
-            case KeyEvent.KEYCODE_V: result = true; break;
-            case KeyEvent.KEYCODE_B: result = true; break;
-            case KeyEvent.KEYCODE_N: result = true; break;
-            case KeyEvent.KEYCODE_M: result = true; break;
-            case KeyEvent.KEYCODE_4: result = true; break;
-            case KeyEvent.KEYCODE_ENTER: result = true; break;
-
-            case KeyEvent.KEYCODE_SHIFT_LEFT: result = true; break;
-            case KeyEvent.KEYCODE_0: result = true; break;
-            case KeyEvent.KEYCODE_SPACE: result = true; break;
-            case KeyEvent.KEYCODE_SYM: result = true; break;
-            case KeyEvent.KEYCODE_SHIFT_RIGHT: result = true; break;
-        }
         return result;
     }
 

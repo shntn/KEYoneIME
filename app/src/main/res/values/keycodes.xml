@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <integer name="key_none">0</integer>
+    <integer name="key_jp">-1008</integer>
     <integer name="key_sym">-1012</integer>
     <integer name="key_dpad_right">-22</integer>
     <integer name="key_dpad_left">-21</integer>

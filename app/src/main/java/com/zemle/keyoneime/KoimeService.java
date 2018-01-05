@@ -82,7 +82,7 @@ public class KoimeService extends InputMethodService {
         mQwertyInputView = new KeyboardViewQwerty(context, null);
 
         mKeyController = KeyController.getInstance();
-        mKeyController.setService(this, mQwertyInputView);
+        mKeyController.setService(context,this, mQwertyInputView);
     }
 
     @Override
