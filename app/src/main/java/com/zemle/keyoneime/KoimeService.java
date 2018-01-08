@@ -164,22 +164,6 @@ public class KoimeService extends InputMethodService implements KeyboardView.OnK
         mKeyboardView.setKeyboard(keyboard);
     }
 
-    public void setInputViewQwerty() {
-        setKeyboard(R.xml.qwerty);
-    }
-
-    public void setInputViewSymbol1() {
-        setKeyboard(R.xml.symbol1);
-    }
-
-    public void setInputViewSymbol2() {
-        setKeyboard(R.xml.symbol2);
-    }
-
-    public void setInputViewHide() {
-        setKeyboard(R.xml.hide);
-    }
-
     public void setSticky(int keyCode, boolean state) {
         int i = 0;
         List<Keyboard.Key> mKeyboardViewKeys = mKeyboardView.getKeyboard().getKeys();

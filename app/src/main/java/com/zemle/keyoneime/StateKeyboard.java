@@ -11,12 +11,7 @@ import android.view.KeyEvent;
  */
 
 enum StateKeyboard {
-    Qwerty {
-        @Override
-        public void enter(KoimeService service) {
-            service.setInputViewQwerty();
-        }
-
+    Qwerty(R.xml.qwerty) {
         @Override
         public void pushSoftSYM(StateKeyboardFrame context) {
             context.changeState(Symbol1);
@@ -32,11 +27,7 @@ enum StateKeyboard {
             context.changeState(Symbol2);
         }
     },
-    Symbol1 {
-        public void enter(KoimeService service) {
-            service.setInputViewSymbol1();
-        }
-
+    Symbol1(R.xml.symbol1) {
         @Override
         public void pushSoftSYM(StateKeyboardFrame context) {
             context.changeState(Symbol2);
@@ -57,11 +48,7 @@ enum StateKeyboard {
             return StateKeyboard.Symbol1;
         }
     },
-    Symbol2 {
-        public void enter(KoimeService service) {
-            service.setInputViewSymbol2();
-        }
-
+    Symbol2(R.xml.symbol2) {
         @Override
         public void pushSoftSYM(StateKeyboardFrame context) {
             context.changeState(Qwerty);
@@ -82,11 +69,7 @@ enum StateKeyboard {
             return StateKeyboard.Symbol2;
         }
     },
-    HideQwerty {
-        public void enter(KoimeService service) {
-            service.setInputViewHide();
-        }
-
+    HideQwerty(R.xml.hide) {
         @Override
         public void pushSoftSYM(StateKeyboardFrame context) {
             context.changeState(Qwerty);
@@ -107,11 +90,7 @@ enum StateKeyboard {
             return StateKeyboard.Qwerty;
         }
     },
-    HideSymbol2 {
-        public void enter(KoimeService service) {
-            service.setInputViewHide();
-        }
-
+    HideSymbol2(R.xml.hide) {
         @Override
         public void pushSoftSYM(StateKeyboardFrame context) {
             context.changeState(Qwerty);
@@ -133,8 +112,14 @@ enum StateKeyboard {
         }
     };
 
+    int xmlId;
+
+    StateKeyboard(int xmlId){
+        this.xmlId = xmlId;
+    }
+
     public void leave(KoimeService service) {}
-    public void enter(KoimeService service) {}
+    public void enter(KoimeService service) { service.setKeyboard(this.xmlId); }
     public void pushSoftSYM(StateKeyboardFrame context) {}
     public void pushHardSYM(StateKeyboardFrame context) {}
     public void downHardALT(StateKeyboardFrame context) {}
