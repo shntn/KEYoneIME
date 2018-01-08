@@ -31,7 +31,6 @@ class KeyController {
 
     private static KeyController singleton = new KeyController();
     private KoimeService mService;
-    private KeyboardView mKeyboardView;
     private StateKeyboardFrame mFrame = new StateKeyboardFrame();
     private StateMetaKey mStateMetaKey;
     private KeyCode mKeyCode;
@@ -46,10 +45,9 @@ class KeyController {
         return singleton;
     }
 
-    void setService(Context context, KoimeService listener, KeyboardView keyboardview) {
-        mService = listener;
-        mKeyboardView = keyboardview;
-        mFrame.setKeyboardView((KeyboardViewQwerty)keyboardview);
+    void setService(Context context, KoimeService service) {
+        mService = service;
+        mFrame.setKeyboardView(service);
         mStateMetaKey = new StateMetaKey(this);
         mKeyCode = new KeyCode(context, mFrame);
     }
@@ -73,28 +71,19 @@ class KeyController {
             mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.SHIFT_KEY);
             mStateMetaKey.releaseMetaKey(StateMetaKey.MetaKey.SHIFT_KEY);
             if (mStateMetaKey.isPress(StateMetaKey.MetaKey.SHIFT_KEY)) {
-                mKeyboardView.setShifted(true);
+                mService.setShift(true);
             } else {
-                mKeyboardView.setShifted(false);
+                mService.setShift(false);
             }
-/*
-            // 1回押下でロック、もう一回押下でアンロック
-            mStateMetaKey.pressSoftMetaKey(StateMetaKey.MetaKey.SHIFT_KEY);
-            if (mStateMetaKey.isPress(StateMetaKey.MetaKey.SHIFT_KEY)) {
-                mKeyboardView.setShifted(true);
-            } else {
-                mKeyboardView.setShifted(false);
-            }
-*/
 
         // CTRL :
         } else if (primaryCode == KEYCODE_QWERTY_CTRL) {
             mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.CTRL_KEY);
             mStateMetaKey.releaseMetaKey(StateMetaKey.MetaKey.CTRL_KEY);
             if (mStateMetaKey.isPress(StateMetaKey.MetaKey.CTRL_KEY)) {
-                ((KeyboardViewQwerty)mKeyboardView).setCtrl(true);
+                mService.setCtrl(true);
             } else {
-                ((KeyboardViewQwerty)mKeyboardView).setCtrl(false);
+                mService.setCtrl(false);
             }
 
         // DELETE :
@@ -140,10 +129,10 @@ class KeyController {
 
             // ソフトキーボードのインジケータを更新
             if (!mStateMetaKey.isPress(StateMetaKey.MetaKey.CTRL_KEY)) {
-                ((KeyboardViewQwerty)mKeyboardView).setCtrl(false);
+                mService.setCtrl(false);
             }
             if (!mStateMetaKey.isPress(StateMetaKey.MetaKey.SHIFT_KEY)) {
-                mKeyboardView.setShifted(false);
+                mService.setShift(false);
             }
 
         }
@@ -175,7 +164,7 @@ class KeyController {
         if (keycode == KeyEvent.KEYCODE_SHIFT_LEFT) {
             if (event.getRepeatCount() == 0) {
                 mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.CTRL_KEY);
-                ((KeyboardViewQwerty)mKeyboardView).setCtrl(true);
+                mService.setCtrl(true);
                 return true;
             } else {
                 return true;
@@ -186,7 +175,7 @@ class KeyController {
         if (keycode == KeyEvent.KEYCODE_SHIFT_RIGHT) {
             if (event.getRepeatCount() == 0) {
                 mStateMetaKey.pressMetaKey(StateMetaKey.MetaKey.SHIFT_KEY);
-                mKeyboardView.setShifted(true);
+                mService.setShift(true);
                 return false;
             } else {
                 return true;
@@ -281,12 +270,12 @@ class KeyController {
 
             // CTRL : CTRLキーのインジケータを更新
             if (!mStateMetaKey.isPress(StateMetaKey.MetaKey.CTRL_KEY)) {
-                ((KeyboardViewQwerty)mKeyboardView).setCtrl(false);
+                mService.setCtrl(false);
             }
 
             // SHIFT : SHIFTキーのインジケータを更新
             if (!mStateMetaKey.isPress(StateMetaKey.MetaKey.SHIFT_KEY)) {
-                mKeyboardView.setShifted(false);
+                mService.setShift(false);
             }
         }
 

@@ -8,20 +8,20 @@ package com.zemle.keyoneime;
 
 class StateKeyboardFrame {
     private StateKeyboard mState;
-    private KeyboardViewQwerty mKeyboardView;
+    private KoimeService mService;
 
     StateKeyboardFrame() {
         mState = StateKeyboard.Qwerty;
     }
 
-    void setKeyboardView(KeyboardViewQwerty keyboardview) {
-        mKeyboardView = keyboardview;
+    void setKeyboardView(KoimeService service) {
+        mService = service;
     }
 
     void changeState(StateKeyboard state) {
-        mState.leave(mKeyboardView);
+        mState.leave(mService);
         mState = state;
-        mState.enter(mKeyboardView);
+        mState.enter(mService);
     }
 
     void pushSoftSYM() {

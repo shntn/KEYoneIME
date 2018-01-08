@@ -2,10 +2,13 @@ package com.zemle.keyoneime;
 
 import android.content.Context;
 import android.inputmethodservice.InputMethodService;
+import android.inputmethodservice.Keyboard;
+import android.inputmethodservice.KeyboardView;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
+import java.util.List;
 import java.util.Locale;
 
 
@@ -18,10 +21,11 @@ import java.util.Locale;
  * Created by shntn on 2017/12/16.
  */
 
-public class KoimeService extends InputMethodService {
+public class KoimeService extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
+    private static final int KEYCODE_QWERTY_CTRL = -2;
 
-    private KeyboardViewQwerty mQwertyInputView = null;
     private KeyController mKeyController = null;
+    private KeyboardView mKeyboardView = null;
 
     @Override
     public void onInitializeInterface() {
@@ -77,21 +81,25 @@ public class KoimeService extends InputMethodService {
         super.onStartInputView(info, restarting);
     }
 
-    private void createInputView() {
+    private KeyboardView createInputView() {
         Context context = getApplicationContext();
-        mQwertyInputView = new KeyboardViewQwerty(context, null);
+        mKeyboardView = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard, null);
+        mKeyboardView.setPreviewEnabled(false);
+        setKeyboard(R.xml.qwerty);
+        mKeyboardView.setOnKeyboardActionListener(this);
+
 
         mKeyController = KeyController.getInstance();
-        mKeyController.setService(context,this, mQwertyInputView);
+        mKeyController.setService(context, this);
+
+        return mKeyboardView;
     }
 
     @Override
     public View onCreateInputView() {
         KoimeLog.d("Method Start: KoimeService.onCreateInputView()");
 
-        createInputView();
-
-        return mQwertyInputView;    // StateKeyboardFrameのコンストラクタでの設定と対応させること
+        return createInputView();
     }
 
     @Override
@@ -122,5 +130,75 @@ public class KoimeService extends InputMethodService {
     public void onFinishInput() {
         KoimeLog.d("Method Start: KoimeService.onFinishInput()");
         super.onFinishInput();
+    }
+
+    public void onKey(int primaryCode, int[] keyCodes) {
+        mKeyController.onKey(primaryCode, keyCodes);
+    }
+
+    public void onPress(int primaryCode) {
+    }
+
+    public void onRelease(int primaryCode) {
+    }
+
+    public void onText(CharSequence text) {
+    }
+
+    public void swipeRight() {
+    }
+
+    public void swipeLeft() {
+    }
+
+    public void swipeDown() {
+    }
+
+    public void swipeUp() {
+    }
+
+    public void setKeyboard(int xmlLayoutResId) {
+        Keyboard keyboard;
+
+        keyboard = new Keyboard(this, xmlLayoutResId);
+        mKeyboardView.setKeyboard(keyboard);
+    }
+
+    public void setInputViewQwerty() {
+        setKeyboard(R.xml.qwerty);
+    }
+
+    public void setInputViewSymbol1() {
+        setKeyboard(R.xml.symbol1);
+    }
+
+    public void setInputViewSymbol2() {
+        setKeyboard(R.xml.symbol2);
+    }
+
+    public void setInputViewHide() {
+        setKeyboard(R.xml.hide);
+    }
+
+    public void setSticky(int keyCode, boolean state) {
+        int i = 0;
+        List<Keyboard.Key> mKeyboardViewKeys = mKeyboardView.getKeyboard().getKeys();
+
+        for (Keyboard.Key key : mKeyboardViewKeys) {
+            if (key.codes[0] == keyCode) {
+                key.on = state;
+                break;
+            }
+            i++;
+        }
+        mKeyboardView.invalidateKey(i);
+    }
+
+    public void setCtrl(boolean state) {
+        setSticky(KEYCODE_QWERTY_CTRL, state);
+    }
+
+    public void setShift(boolean state) {
+        mKeyboardView.setShifted(state);
     }
 }

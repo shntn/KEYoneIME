@@ -13,8 +13,8 @@ import android.view.KeyEvent;
 enum StateKeyboard {
     Qwerty {
         @Override
-        public void enter(KeyboardViewQwerty keyboardview) {
-            keyboardview.setInputViewQwerty();
+        public void enter(KoimeService service) {
+            service.setInputViewQwerty();
         }
 
         @Override
@@ -33,8 +33,8 @@ enum StateKeyboard {
         }
     },
     Symbol1 {
-        public void enter(KeyboardViewQwerty keyboardview) {
-            keyboardview.setInputViewSymbol1();
+        public void enter(KoimeService service) {
+            service.setInputViewSymbol1();
         }
 
         @Override
@@ -58,8 +58,8 @@ enum StateKeyboard {
         }
     },
     Symbol2 {
-        public void enter(KeyboardViewQwerty keyboardview) {
-            keyboardview.setInputViewSymbol2();
+        public void enter(KoimeService service) {
+            service.setInputViewSymbol2();
         }
 
         @Override
@@ -83,8 +83,8 @@ enum StateKeyboard {
         }
     },
     HideQwerty {
-        public void enter(KeyboardViewQwerty keyboardview) {
-            keyboardview.setInputViewHide();
+        public void enter(KoimeService service) {
+            service.setInputViewHide();
         }
 
         @Override
@@ -108,8 +108,8 @@ enum StateKeyboard {
         }
     },
     HideSymbol2 {
-        public void enter(KeyboardViewQwerty keyboardview) {
-            keyboardview.setInputViewHide();
+        public void enter(KoimeService service) {
+            service.setInputViewHide();
         }
 
         @Override
@@ -131,11 +131,10 @@ enum StateKeyboard {
         public StateKeyboard getType() {
             return StateKeyboard.Symbol2;
         }
-    },
-    ;
+    };
 
-    public void leave(KeyboardViewQwerty keyboardview) {}
-    public void enter(KeyboardViewQwerty keyboardview) {}
+    public void leave(KoimeService service) {}
+    public void enter(KoimeService service) {}
     public void pushSoftSYM(StateKeyboardFrame context) {}
     public void pushHardSYM(StateKeyboardFrame context) {}
     public void downHardALT(StateKeyboardFrame context) {}
