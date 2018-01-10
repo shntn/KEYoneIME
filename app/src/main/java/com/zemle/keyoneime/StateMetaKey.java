@@ -56,11 +56,12 @@ class StateMetaKey {
             }
 
             void press(StateMetaKey outer) {
+                State next = OFF;
+
                 if (outer.CONFIG_LOCKED) {
-                    outer.changeState(LOCKED);
-                } else {
-                    outer.changeState(OFF);
+                    next = LOCKED;
                 }
+                outer.changeState(next);
             }
 
             void use(StateMetaKey outer) {
