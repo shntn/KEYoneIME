@@ -1,128 +1,183 @@
 package com.zemle.keyoneime;
 
-import android.view.KeyEvent;
-
 /**
- * ソフトキーボードの表示状態と遷移を管理。
- * ソフトキーボードが表示されている状態でハードキーが押された場合、
- * 対応する文字コードを返す。
+ * ソフトキーボードの状態遷移
  *
- * Created by shntn on 2018/01/02.
+ * Created by shntn on 2018/01/11.
  */
 
-enum StateKeyboard {
-    Qwerty(R.xml.qwerty) {
-        @Override
-        public void pushSoftSYM(StateKeyboardFrame context) {
-            context.changeState(Symbol1);
+class StateKeyboard {
+    enum State {
+        Qwerty(R.xml.qwerty) {
+            @Override
+            public void pushSoftSYM(StateKeyboard context) {
+                context.changeState(Symbol1);
+            }
+
+            @Override
+            public void pushHardSYM(StateKeyboard context) {
+                context.changeState(HideQwerty);
+            }
+
+            @Override
+            public void downHardALT(StateKeyboard context) {
+                context.changeState(Symbol2);
+            }
+        },
+        Symbol1(R.xml.symbol1) {
+            @Override
+            public void pushSoftSYM(StateKeyboard context) {
+                context.changeState(Symbol2);
+            }
+
+            @Override
+            public void pushHardSYM(StateKeyboard context) {
+                context.changeState(Symbol2);
+            }
+
+            @Override
+            public void downHardALT(StateKeyboard context) {
+                context.changeState(Symbol2);
+            }
+
+            @Override
+            public State getType() {
+                return State.Symbol1;
+            }
+        },
+        Symbol2(R.xml.symbol2) {
+            @Override
+            public void pushSoftSYM(StateKeyboard context) {
+                context.changeState(Qwerty);
+            }
+
+            @Override
+            public void pushHardSYM(StateKeyboard context) {
+                context.changeState(HideQwerty);
+            }
+
+            @Override
+            public void upHardALT(StateKeyboard context) {
+                context.changeState(HideQwerty);
+            }
+
+            @Override
+            public State getType() {
+                return State.Symbol2;
+            }
+        },
+        HideQwerty(R.xml.hide) {
+            @Override
+            public void pushSoftSYM(StateKeyboard context) {
+                context.changeState(Qwerty);
+            }
+
+            @Override
+            public void pushHardSYM(StateKeyboard context) {
+                context.changeState(Symbol1);
+            }
+
+            @Override
+            public void downHardALT(StateKeyboard context) {
+                context.changeState(HideSymbol2);
+            }
+
+            @Override
+            public State getType() {
+                return State.Qwerty;
+            }
+        },
+        HideSymbol2(R.xml.hide) {
+            @Override
+            public void pushSoftSYM(StateKeyboard context) {
+                context.changeState(Qwerty);
+            }
+
+            @Override
+            public void pushHardSYM(StateKeyboard context) {
+                context.changeState(HideQwerty);
+            }
+
+            @Override
+            public void upHardALT(StateKeyboard context) {
+                context.changeState(HideQwerty);
+            }
+
+            @Override
+            public State getType() {
+                return Symbol2;
+            }
+        };
+
+        int xmlId;
+
+        State(int xmlId) {
+            this.xmlId = xmlId;
         }
 
-        @Override
-        public void pushHardSYM(StateKeyboardFrame context) {
-            context.changeState(HideQwerty);
+        void leave(KoimeService service) {
         }
 
-        @Override
-        public void downHardALT(StateKeyboardFrame context) {
-            context.changeState(Symbol2);
-        }
-    },
-    Symbol1(R.xml.symbol1) {
-        @Override
-        public void pushSoftSYM(StateKeyboardFrame context) {
-            context.changeState(Symbol2);
+        void enter(KoimeService service) {
+            service.setKeyboard(this.xmlId);
         }
 
-        @Override
-        public void pushHardSYM(StateKeyboardFrame context) {
-            context.changeState(Symbol2);
+        void pushSoftSYM(StateKeyboard context) {
         }
 
-        @Override
-        public void downHardALT(StateKeyboardFrame context) {
-            context.changeState(Symbol2);
+        void pushHardSYM(StateKeyboard context) {
         }
 
-        @Override
-        public StateKeyboard getType() {
-            return StateKeyboard.Symbol1;
-        }
-    },
-    Symbol2(R.xml.symbol2) {
-        @Override
-        public void pushSoftSYM(StateKeyboardFrame context) {
-            context.changeState(Qwerty);
+        void downHardALT(StateKeyboard context) {
         }
 
-        @Override
-        public void pushHardSYM(StateKeyboardFrame context) {
-            context.changeState(HideQwerty);
+        void upHardALT(StateKeyboard context) {
         }
 
-        @Override
-        public void upHardALT(StateKeyboardFrame context) {
-            context.changeState(HideQwerty);
+        State getType() {
+            return State.Qwerty;
         }
-
-        @Override
-        public StateKeyboard getType() {
-            return StateKeyboard.Symbol2;
-        }
-    },
-    HideQwerty(R.xml.hide) {
-        @Override
-        public void pushSoftSYM(StateKeyboardFrame context) {
-            context.changeState(Qwerty);
-        }
-
-        @Override
-        public void pushHardSYM(StateKeyboardFrame context) {
-            context.changeState(Symbol1);
-        }
-
-        @Override
-        public void downHardALT(StateKeyboardFrame context) {
-            context.changeState(HideSymbol2);
-        }
-
-        @Override
-        public StateKeyboard getType() {
-            return StateKeyboard.Qwerty;
-        }
-    },
-    HideSymbol2(R.xml.hide) {
-        @Override
-        public void pushSoftSYM(StateKeyboardFrame context) {
-            context.changeState(Qwerty);
-        }
-
-        @Override
-        public void pushHardSYM(StateKeyboardFrame context) {
-            context.changeState(HideQwerty);
-        }
-
-        @Override
-        public void upHardALT(StateKeyboardFrame context) {
-            context.changeState(HideQwerty);
-        }
-
-        @Override
-        public StateKeyboard getType() {
-            return StateKeyboard.Symbol2;
-        }
-    };
-
-    int xmlId;
-
-    StateKeyboard(int xmlId){
-        this.xmlId = xmlId;
     }
 
-    public void leave(KoimeService service) {}
-    public void enter(KoimeService service) { service.setKeyboard(this.xmlId); }
-    public void pushSoftSYM(StateKeyboardFrame context) {}
-    public void pushHardSYM(StateKeyboardFrame context) {}
-    public void downHardALT(StateKeyboardFrame context) {}
-    public void upHardALT(StateKeyboardFrame context) {}
-    public StateKeyboard getType() { return StateKeyboard.Qwerty; }
+    private State mState;
+    private KoimeService mService;
+
+    private void changeState(State state) {
+        mState.leave(mService);
+        mState = state;
+        mState.enter(mService);
+    }
+
+    StateKeyboard() {
+        mState = State.Qwerty;
+    }
+
+    void setService(KoimeService service) {
+        mService = service;
+    }
+
+    void pushSoftSYM() {
+        mState.pushSoftSYM(this);
+    }
+
+    void pushHardSYM() {
+        mState.pushHardSYM(this);
+    }
+
+    void downHardALT() {
+        mState.downHardALT(this);
+    }
+
+    void upHardALT() {
+        mState.upHardALT(this);
+    }
+
+    State getType() {
+        return mState.getType();
+    }
+
+    State getState() {
+        return mState;
+    }
 }
+

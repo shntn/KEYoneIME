@@ -3,7 +3,6 @@ package com.zemle.keyoneime;
 import android.content.Context;
 import android.view.KeyEvent;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -17,14 +16,14 @@ import java.util.Map;
  * Created by shntn on 2018/01/06.
  */
 
-public class KeyCode {
-    private StateKeyboardFrame  mKeyboard;
+class KeyCode {
+    private StateKeyboard mKeyboard;
     private Map<Integer, Integer> mQwertyMap;
     private Map<Integer, Integer> mSymbol1Map;
     private Map<Integer, Integer> mSymbol2Map;
     private int mKeyNone;
 
-    public  KeyCode(Context context, StateKeyboardFrame keyboard){
+    KeyCode(Context context, StateKeyboard keyboard){
         mKeyboard = keyboard;
         mQwertyMap = createQwertyMap(context);
         mSymbol1Map = createSymbol1Map(context);
@@ -162,18 +161,18 @@ public class KeyCode {
     }
 
     int convert(int keyCode) {
-        StateKeyboard keyboard;
+        StateKeyboard.State keyboard;
         int result;
 
         keyboard = mKeyboard.getType();
 
-        if ((keyboard == StateKeyboard.Qwerty)
+        if ((keyboard == StateKeyboard.State.Qwerty)
                 && (mQwertyMap.containsKey(keyCode))) {
             result = mQwertyMap.get(keyCode);
-        } else if ((keyboard == StateKeyboard.Symbol1)
+        } else if ((keyboard == StateKeyboard.State.Symbol1)
                 && (mSymbol1Map.containsKey(keyCode))) {
             result = mSymbol1Map.get(keyCode);
-        } else if ((keyboard == StateKeyboard.Symbol2)
+        } else if ((keyboard == StateKeyboard.State.Symbol2)
                 && (mSymbol2Map.containsKey(keyCode))) {
             result = mSymbol2Map.get(keyCode);
         } else {

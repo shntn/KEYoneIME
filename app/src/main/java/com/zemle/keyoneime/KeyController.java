@@ -30,7 +30,7 @@ class KeyController {
 
     private static KeyController singleton = new KeyController();
     private KoimeService mService;
-    private StateKeyboardFrame mFrame = new StateKeyboardFrame();
+    private StateKeyboard mFrame = new StateKeyboard();
     private KeyCode mKeyCode;
 
     private StateMetaKey mStateCtrlKey;
@@ -49,7 +49,7 @@ class KeyController {
 
     void setService(Context context, KoimeService service) {
         mService = service;
-        mFrame.setKeyboardView(service);
+        mFrame.setService(service);
         mStateCtrlKey = new StateMetaKey();
         mStateShiftKey = new StateMetaKey();
         mStateAltKey = new StateMetaKey();
@@ -88,7 +88,7 @@ class KeyController {
         // SYM :
         } else if (primaryCode == KEYCODE_QWERTY_SYM) {
             mFrame.pushSoftSYM();
-            if (mFrame.getState() == StateKeyboard.Symbol2) {
+            if (mFrame.getState() == StateKeyboard.State.Symbol2) {
                 mStateAltKey.press();
                 mStateAltKey.press();
             }
@@ -212,7 +212,7 @@ class KeyController {
 
         // ALTキーを押下中でもonKeyUpのイベントが発生する対策
         if ((event.isAltPressed())
-                && (mFrame.getType() != StateKeyboard.Symbol2)) {
+                && (mFrame.getType() != StateKeyboard.State.Symbol2)) {
             mFrame.downHardALT();
         }
 
