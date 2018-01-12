@@ -7,7 +7,7 @@ import android.inputmethodservice.KeyboardView;
 import java.util.List;
 
 /**
- * キーボードビューの
+ * キーボードビューの管理
  *
  * Created by shntn on 2018/01/13.
  */
