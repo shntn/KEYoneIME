@@ -161,18 +161,15 @@ class KeyCode {
     }
 
     int convert(int keyCode) {
-        StateKeyboard.State keyboard;
         int result;
 
-        keyboard = mKeyboard.getType();
-
-        if ((keyboard == StateKeyboard.State.Qwerty)
+        if ((mKeyboard.isType(StateKeyboard.State.Qwerty))
                 && (mQwertyMap.containsKey(keyCode))) {
             result = mQwertyMap.get(keyCode);
-        } else if ((keyboard == StateKeyboard.State.Symbol1)
+        } else if ((mKeyboard.isType(StateKeyboard.State.Symbol1))
                 && (mSymbol1Map.containsKey(keyCode))) {
             result = mSymbol1Map.get(keyCode);
-        } else if ((keyboard == StateKeyboard.State.Symbol2)
+        } else if ((mKeyboard.isType(StateKeyboard.State.Symbol2))
                 && (mSymbol2Map.containsKey(keyCode))) {
             result = mSymbol2Map.get(keyCode);
         } else {

@@ -172,12 +172,12 @@ class StateKeyboard {
         mState.upHardALT(this);
     }
 
-    State getType() {
-        return mState.getType();
+    boolean isState(State state) {
+        return state == mState;
     }
 
-    State getState() {
-        return mState;
+    boolean isType(State state) {
+        return state == mState.getType();
     }
 }
 

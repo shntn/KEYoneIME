@@ -88,7 +88,7 @@ class KeyController {
         // SYM :
         } else if (primaryCode == KEYCODE_QWERTY_SYM) {
             mFrame.pushSoftSYM();
-            if (mFrame.getState() == StateKeyboard.State.Symbol2) {
+            if (mFrame.isState(StateKeyboard.State.Symbol2)) {
                 mStateAltKey.press();
                 mStateAltKey.press();
             }
@@ -212,7 +212,7 @@ class KeyController {
 
         // ALTキーを押下中でもonKeyUpのイベントが発生する対策
         if ((event.isAltPressed())
-                && (mFrame.getType() != StateKeyboard.State.Symbol2)) {
+                && (!mFrame.isType(StateKeyboard.State.Symbol2))) {
             mFrame.downHardALT();
         }
 
