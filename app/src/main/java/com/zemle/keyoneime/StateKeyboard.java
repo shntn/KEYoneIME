@@ -115,11 +115,11 @@ class StateKeyboard {
             this.xmlId = xmlId;
         }
 
-        void leave(KoimeService service) {
+        void leave(KoimeKeyboardView keyboardView) {
         }
 
-        void enter(KoimeService service) {
-            service.setKeyboard(this.xmlId);
+        void enter(KoimeKeyboardView keyboardView) {
+            keyboardView.setKeyboard(this.xmlId);
         }
 
         void pushSoftSYM(StateKeyboard context) {
@@ -140,20 +140,20 @@ class StateKeyboard {
     }
 
     private State mState;
-    private KoimeService mService;
+    private KoimeKeyboardView mKeyboardView;
 
     private void changeState(State state) {
-        mState.leave(mService);
+        mState.leave(mKeyboardView);
         mState = state;
-        mState.enter(mService);
+        mState.enter(mKeyboardView);
     }
 
     StateKeyboard() {
         mState = State.Qwerty;
     }
 
-    void setService(KoimeService service) {
-        mService = service;
+    void setup(KoimeKeyboardView keyboardView) {
+        mKeyboardView = keyboardView;
     }
 
     void pushSoftSYM() {

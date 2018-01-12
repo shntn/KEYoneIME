@@ -1,6 +1,7 @@
 package com.zemle.keyoneime;
 
 import android.content.Context;
+import android.inputmethodservice.KeyboardView;
 import android.view.KeyEvent;
 import android.view.inputmethod.InputConnection;
 import android.inputmethodservice.Keyboard;
@@ -30,7 +31,8 @@ class KeyController {
 
     private static KeyController singleton = new KeyController();
     private KoimeService mService;
-    private StateKeyboard mFrame = new StateKeyboard();
+    private KoimeKeyboardView mKeyboardView;
+    private StateKeyboard mStateKeyboard = new StateKeyboard();
     private KeyCode mKeyCode;
 
     private StateMetaKey mStateCtrlKey;
@@ -47,13 +49,18 @@ class KeyController {
         return singleton;
     }
 
-    void setService(Context context, KoimeService service) {
+    void setup(Context context, KoimeService service) {
         mService = service;
-        mFrame.setService(service);
+        mKeyboardView = new KoimeKeyboardView(context, service);
+        mStateKeyboard.setup(mKeyboardView);
         mStateCtrlKey = new StateMetaKey();
         mStateShiftKey = new StateMetaKey();
         mStateAltKey = new StateMetaKey();
-        mKeyCode = new KeyCode(context, mFrame);
+        mKeyCode = new KeyCode(context, mStateKeyboard);
+    }
+
+    KeyboardView createKeyboardView() {
+        return mKeyboardView.createView();
     }
 
     void onKey(int primaryCode, int[] keyCodes) {
@@ -73,13 +80,13 @@ class KeyController {
         if (primaryCode == Keyboard.KEYCODE_SHIFT) {
             mStateShiftKey.press();
             mStateShiftKey.release();
-            mService.setShift(mStateShiftKey.isPress());
+            mKeyboardView.setShift(mStateShiftKey.isPress());
 
         // CTRL :
         } else if (primaryCode == KEYCODE_QWERTY_CTRL) {
             mStateCtrlKey.press();
             mStateCtrlKey.release();
-            mService.setCtrl(mStateCtrlKey.isPress());
+            mKeyboardView.setCtrl(mStateCtrlKey.isPress());
 
         // DELETE :
         } else if (primaryCode == Keyboard.KEYCODE_DELETE) {
@@ -87,8 +94,8 @@ class KeyController {
 
         // SYM :
         } else if (primaryCode == KEYCODE_QWERTY_SYM) {
-            mFrame.pushSoftSYM();
-            if (mFrame.isState(StateKeyboard.State.Symbol2)) {
+            mStateKeyboard.pushSoftSYM();
+            if (mStateKeyboard.isState(StateKeyboard.State.Symbol2)) {
                 mStateAltKey.press();
                 mStateAltKey.press();
             }
@@ -123,8 +130,8 @@ class KeyController {
             }
 
             // ソフトキーボードのインジケータを更新
-            mService.setCtrl(mStateCtrlKey.isPress());
-            mService.setCtrl(mStateShiftKey.isPress());
+            mKeyboardView.setCtrl(mStateCtrlKey.isPress());
+            mKeyboardView.setCtrl(mStateShiftKey.isPress());
         }
 
         KoimeLog.d(String.format(
@@ -140,7 +147,7 @@ class KeyController {
 
         // SYM : キーボードの切り替え
         if (keycode == KeyEvent.KEYCODE_SYM) {
-            mFrame.pushHardSYM();
+            mStateKeyboard.pushHardSYM();
             return true;
         }
 
@@ -148,7 +155,7 @@ class KeyController {
         if (keycode == KeyEvent.KEYCODE_ALT_LEFT) {
             if (event.getRepeatCount() == 0) {
                 mStateAltKey.press();
-                mFrame.downHardALT();
+                mStateKeyboard.downHardALT();
 
                 KoimeLog.d(String.format(
                         Locale.US,
@@ -167,7 +174,7 @@ class KeyController {
         if (keycode == KeyEvent.KEYCODE_SHIFT_LEFT) {
             if (event.getRepeatCount() == 0) {
                 mStateCtrlKey.press();
-                mService.setCtrl(true);
+                mKeyboardView.setCtrl(true);
 
                 KoimeLog.d(String.format(
                         Locale.US,
@@ -186,7 +193,7 @@ class KeyController {
         if (keycode == KeyEvent.KEYCODE_SHIFT_RIGHT) {
             if (event.getRepeatCount() == 0) {
                 mStateShiftKey.press();
-                mService.setShift(true);
+                mKeyboardView.setShift(true);
 
                 KoimeLog.d(String.format(
                         Locale.US,
@@ -311,14 +318,14 @@ class KeyController {
         if (keycode != KeyEvent.KEYCODE_SYM) {
             // ALT : ソフトキーボードの表示切り替え
             if (mStateAltKey.isPress()) {
-                mFrame.upHardALT();
+                mStateKeyboard.upHardALT();
             }
 
             // CTRL : CTRLキーのインジケータを更新
-            mService.setCtrl(mStateCtrlKey.isPress());
+            mKeyboardView.setCtrl(mStateCtrlKey.isPress());
 
             // SHIFT : SHIFTキーのインジケータを更新
-            mService.setShift(mStateShiftKey.isPress());
+            mKeyboardView.setShift(mStateShiftKey.isPress());
         }
 
         return result;

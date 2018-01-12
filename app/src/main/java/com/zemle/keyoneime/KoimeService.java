@@ -24,6 +24,7 @@ import java.util.Locale;
 public class KoimeService extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
     private static final int KEYCODE_QWERTY_CTRL = -2;
 
+    private KoimeKeyboardView mKoimeKeyboardView = null;
     private KeyController mKeyController = null;
     private KeyboardView mKeyboardView = null;
 
@@ -83,16 +84,13 @@ public class KoimeService extends InputMethodService implements KeyboardView.OnK
 
     private KeyboardView createInputView() {
         Context context = getApplicationContext();
-        mKeyboardView = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard, null);
-        mKeyboardView.setPreviewEnabled(false);
-        setKeyboard(R.xml.qwerty);
-        mKeyboardView.setOnKeyboardActionListener(this);
-
+        KeyboardView keyboardView;
 
         mKeyController = KeyController.getInstance();
-        mKeyController.setService(context, this);
+        mKeyController.setup(context, this);
+        keyboardView = mKeyController.createKeyboardView();
 
-        return mKeyboardView;
+        return keyboardView;
     }
 
     @Override
@@ -155,34 +153,5 @@ public class KoimeService extends InputMethodService implements KeyboardView.OnK
     }
 
     public void swipeUp() {
-    }
-
-    public void setKeyboard(int xmlLayoutResId) {
-        Keyboard keyboard;
-
-        keyboard = new Keyboard(this, xmlLayoutResId);
-        mKeyboardView.setKeyboard(keyboard);
-    }
-
-    public void setSticky(int keyCode, boolean state) {
-        int i = 0;
-        List<Keyboard.Key> mKeyboardViewKeys = mKeyboardView.getKeyboard().getKeys();
-
-        for (Keyboard.Key key : mKeyboardViewKeys) {
-            if (key.codes[0] == keyCode) {
-                key.on = state;
-                break;
-            }
-            i++;
-        }
-        mKeyboardView.invalidateKey(i);
-    }
-
-    public void setCtrl(boolean state) {
-        setSticky(KEYCODE_QWERTY_CTRL, state);
-    }
-
-    public void setShift(boolean state) {
-        mKeyboardView.setShifted(state);
     }
 }
