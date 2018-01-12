@@ -210,12 +210,6 @@ class KeyController {
             return true;
         }
 
-        // ALTキーを押下中でもonKeyUpのイベントが発生する対策
-        if ((event.isAltPressed())
-                && (!mFrame.isType(StateKeyboard.State.Symbol2))) {
-            mFrame.downHardALT();
-        }
-
         code = mKeyCode.convert(keycode);
 
         if (code == KEYCODE_QWERTY_UP) {
