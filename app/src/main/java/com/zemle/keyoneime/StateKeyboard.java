@@ -1,5 +1,7 @@
 package com.zemle.keyoneime;
 
+import android.view.KeyEvent;
+
 /**
  * ソフトキーボードの状態遷移
  *
@@ -26,7 +28,7 @@ class StateKeyboard {
         },
         Symbol1(R.xml.symbol1) {
             @Override
-            public void pushSoftSYM(StateKeyboard context) {
+            public void pushSoftALT(StateKeyboard context) {
                 context.changeState(Symbol2);
             }
 
@@ -47,7 +49,7 @@ class StateKeyboard {
         },
         Symbol2(R.xml.symbol2) {
             @Override
-            public void pushSoftSYM(StateKeyboard context) {
+            public void pushSoftALT(StateKeyboard context) {
                 context.changeState(Qwerty);
             }
 
@@ -68,11 +70,6 @@ class StateKeyboard {
         },
         HideQwerty(R.xml.hide) {
             @Override
-            public void pushSoftSYM(StateKeyboard context) {
-                context.changeState(Qwerty);
-            }
-
-            @Override
             public void pushHardSYM(StateKeyboard context) {
                 context.changeState(Symbol1);
             }
@@ -89,11 +86,6 @@ class StateKeyboard {
         },
         HideSymbol2(R.xml.hide) {
             @Override
-            public void pushSoftSYM(StateKeyboard context) {
-                context.changeState(Qwerty);
-            }
-
-            @Override
             public void pushHardSYM(StateKeyboard context) {
                 context.changeState(HideQwerty);
             }
@@ -105,7 +97,7 @@ class StateKeyboard {
 
             @Override
             public State getType() {
-                return Symbol2;
+                return State.Symbol2;
             }
         };
 
@@ -123,6 +115,9 @@ class StateKeyboard {
         }
 
         void pushSoftSYM(StateKeyboard context) {
+        }
+
+        void pushSoftALT(StateKeyboard context) {
         }
 
         void pushHardSYM(StateKeyboard context) {
@@ -156,20 +151,38 @@ class StateKeyboard {
         mKeyboardView = keyboardView;
     }
 
-    void pushSoftSYM() {
-        mState.pushSoftSYM(this);
+    void changeHardKey(KeyEvent event) {
+        int action = event.getAction();
+        int keycode = event.getKeyCode();
+
+        switch (action) {
+            case KeyEvent.ACTION_DOWN:
+                if (keycode == KeyEvent.KEYCODE_SYM) {
+                    mState.pushHardSYM(this);
+                } else if (keycode == KeyEvent.KEYCODE_ALT_LEFT) {
+                    mState.downHardALT(this);
+                }
+                break;
+            case KeyEvent.ACTION_UP:
+                if (keycode == KeyEvent.KEYCODE_ALT_LEFT) {
+                    mState.upHardALT(this);
+                }
+                break;
+        }
     }
 
-    void pushHardSYM() {
-        mState.pushHardSYM(this);
-    }
+    void changeSoftKey(KeyEvent event) {
+        int action = event.getAction();
+        int keycode = event.getKeyCode();
 
-    void downHardALT() {
-        mState.downHardALT(this);
-    }
-
-    void upHardALT() {
-        mState.upHardALT(this);
+        if (action == KeyEvent.ACTION_DOWN) {
+            if (keycode == KeyEvent.KEYCODE_SYM) {
+                mState.pushSoftSYM(this);
+            }
+            if (keycode == KeyEvent.KEYCODE_ALT_LEFT) {
+                mState.pushSoftALT(this);
+            }
+        }
     }
 
     boolean isState(State state) {
