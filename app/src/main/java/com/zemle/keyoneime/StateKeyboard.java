@@ -1,5 +1,7 @@
 package com.zemle.keyoneime;
 
+import android.view.KeyEvent;
+
 /**
  * ソフトキーボードの状態遷移
  *
@@ -105,7 +107,7 @@ class StateKeyboard {
 
             @Override
             public State getType() {
-                return Symbol2;
+                return State.Symbol2;
             }
         };
 
@@ -156,20 +158,34 @@ class StateKeyboard {
         mKeyboardView = keyboardView;
     }
 
-    void pushSoftSYM() {
-        mState.pushSoftSYM(this);
+    void changeHardKey(KeyEvent event) {
+        int action = event.getAction();
+        int keycode = event.getKeyCode();
+
+        switch (action) {
+            case KeyEvent.ACTION_DOWN:
+                if (keycode == KeyEvent.KEYCODE_SYM) {
+                    mState.pushHardSYM(this);
+                } else if (keycode == KeyEvent.KEYCODE_ALT_LEFT) {
+                    mState.downHardALT(this);
+                }
+                break;
+            case KeyEvent.ACTION_UP:
+                if (keycode == KeyEvent.KEYCODE_ALT_LEFT) {
+                    mState.upHardALT(this);
+                }
+                break;
+        }
     }
 
-    void pushHardSYM() {
-        mState.pushHardSYM(this);
-    }
+    void changeSoftKey(KeyEvent event) {
+        int action = event.getAction();
+        int keycode = event.getKeyCode();
 
-    void downHardALT() {
-        mState.downHardALT(this);
-    }
-
-    void upHardALT() {
-        mState.upHardALT(this);
+        if ((action == KeyEvent.ACTION_DOWN)
+                && (keycode == KeyEvent.KEYCODE_SYM)) {
+            mState.pushSoftSYM(this);
+        }
     }
 
     boolean isState(State state) {
