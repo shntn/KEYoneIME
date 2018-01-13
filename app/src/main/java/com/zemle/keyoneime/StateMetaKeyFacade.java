@@ -64,6 +64,26 @@ class StateMetaKeyFacade {
         return pressed;
     }
 
+    int createMetaState() {
+        int metaState = 0;
+
+        // 現状のメタキー状態を作成
+        if (isPressed(Meta.ALT)) {
+            metaState |= KeyEvent.META_ALT_LEFT_ON;
+            metaState |= KeyEvent.META_ALT_ON;
+        }
+        if (isPressed(Meta.SHIFT)) {
+            metaState |= KeyEvent.META_SHIFT_RIGHT_ON;
+            metaState |= KeyEvent.META_SHIFT_ON;
+        }
+        if (isPressed(Meta.CTRL)) {
+            metaState |= KeyEvent.META_CTRL_LEFT_ON;
+            metaState |= KeyEvent.META_CTRL_ON;
+        }
+
+        return metaState;
+    }
+
     private void pressMetaKey(int keycode) {
         switch (keycode) {
             case KeyEvent.KEYCODE_ALT_LEFT:

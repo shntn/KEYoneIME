@@ -179,9 +179,222 @@ class KeyCode {
         return result;
     }
 
-    boolean isHardKey(int keyCode) {
-        return mQwertyMap.containsKey(keyCode)
-                || mSymbol1Map.containsKey(keyCode)
-                || mSymbol2Map.containsKey(keyCode);
+    KeyEvent convertToKeyEvent(int keycode, int action, int metaState) {
+        KeyEvent event = new KeyEvent(0, 0, action, keycode, 0, metaState);
+
+        if (mKeyboard.isType(StateKeyboard.State.Qwerty)) {
+            switch (keycode) {
+                case KeyEvent.KEYCODE_DEL:
+                case KeyEvent.KEYCODE_ENTER:
+                case KeyEvent.KEYCODE_SPACE:
+                case KeyEvent.KEYCODE_SYM:
+                case KeyEvent.KEYCODE_ALT_LEFT:
+                case KeyEvent.KEYCODE_SHIFT_RIGHT:
+                    event = new KeyEvent(0, 0, action, keycode, 0, metaState);
+                    break;
+                case KeyEvent.KEYCODE_SHIFT_LEFT:
+                    event = new KeyEvent(0, 0, action, KeyEvent.KEYCODE_CTRL_LEFT, 0, metaState);
+                    break;
+            }
+        } else if (mKeyboard.isType(StateKeyboard.State.Symbol1)) {
+            switch (keycode) {
+                case KeyEvent.KEYCODE_Q:
+                    event = new KeyEvent(0, 0, action, KeyEvent.KEYCODE_ESCAPE, 0, metaState);
+                    break;
+                case KeyEvent.KEYCODE_A:
+                    event = new KeyEvent(0, 0, action, KeyEvent.KEYCODE_TAB, 0, metaState);
+                    break;
+                case KeyEvent.KEYCODE_D:
+                    event = new KeyEvent(0, 0, action, KeyEvent.KEYCODE_DPAD_UP, 0, metaState);
+                    break;
+                case KeyEvent.KEYCODE_Z:
+                    event = new KeyEvent(0, 0, action, KeyEvent.KEYCODE_DPAD_LEFT, 0, metaState);
+                    break;
+                case KeyEvent.KEYCODE_X:
+                    event = new KeyEvent(0, 0, action, KeyEvent.KEYCODE_DPAD_DOWN, 0, metaState);
+                    break;
+                case KeyEvent.KEYCODE_C:
+                    event = new KeyEvent(0, 0, action, KeyEvent.KEYCODE_DPAD_RIGHT, 0, metaState);
+                    break;
+                case KeyEvent.KEYCODE_DEL:
+                case KeyEvent.KEYCODE_ALT_LEFT:
+                case KeyEvent.KEYCODE_ENTER:
+                case KeyEvent.KEYCODE_SPACE:
+                case KeyEvent.KEYCODE_SYM:
+                case KeyEvent.KEYCODE_SHIFT_RIGHT:
+                    event = new KeyEvent(0, 0, action, keycode, 0, metaState);
+                    break;
+                case KeyEvent.KEYCODE_SHIFT_LEFT:
+                    event = new KeyEvent(0, 0, action, KeyEvent.KEYCODE_CTRL_LEFT, 0, metaState);
+                    break;
+            }
+        } else if (mKeyboard.isType(StateKeyboard.State.Symbol2)) {
+            switch (keycode) {
+                case KeyEvent.KEYCODE_DEL:
+                case KeyEvent.KEYCODE_ALT_LEFT:
+                case KeyEvent.KEYCODE_ENTER:
+                case KeyEvent.KEYCODE_SYM:
+                case KeyEvent.KEYCODE_SHIFT_RIGHT:
+                    event = new KeyEvent(0, 0, action, keycode, 0, metaState);
+                    break;
+                case KeyEvent.KEYCODE_SHIFT_LEFT:
+                    event = new KeyEvent(0, 0, action, KeyEvent.KEYCODE_CTRL_LEFT, 0, metaState);
+                    break;
+            }
+        }
+
+        return event;
     }
+
+    int convertKeyCode(int primaryCode) {
+        int code = 0;
+
+        switch (primaryCode) {
+            case 'q':
+            case '#':
+                code = KeyEvent.KEYCODE_Q;
+                break;
+            case 'w':
+            case '1':
+                code = KeyEvent.KEYCODE_W;
+                break;
+            case 'e':
+            case '2':
+                code = KeyEvent.KEYCODE_E;
+                break;
+            case 'r':
+            case '3':
+                code = KeyEvent.KEYCODE_R;
+                break;
+            case 't':
+            case '(':
+                code = KeyEvent.KEYCODE_T;
+                break;
+            case 'y':
+            case ')':
+                code = KeyEvent.KEYCODE_Y;
+                break;
+            case 'u':
+            case '_':
+                code = KeyEvent.KEYCODE_U;
+                break;
+            case 'i':
+            case '-':
+                code = KeyEvent.KEYCODE_I;
+                break;
+            case 'o':
+            case '+':
+                code = KeyEvent.KEYCODE_O;
+                break;
+            case 'p':
+            case '@':
+                code = KeyEvent.KEYCODE_P;
+                break;
+
+            case 'a':
+            case '*':
+                code = KeyEvent.KEYCODE_A;
+                break;
+            case 's':
+            case '4':
+                code = KeyEvent.KEYCODE_S;
+                break;
+            case 'd':
+            case '5':
+                code = KeyEvent.KEYCODE_D;
+                break;
+            case 'f':
+            case '6':
+                code = KeyEvent.KEYCODE_F;
+                break;
+            case 'g':
+            case '/':
+                code = KeyEvent.KEYCODE_G;
+                break;
+            case 'h':
+            case ':':
+                code = KeyEvent.KEYCODE_H;
+                break;
+            case 'j':
+            case ';':
+                code = KeyEvent.KEYCODE_J;
+                break;
+            case 'k':
+            case '\'':
+                code = KeyEvent.KEYCODE_K;
+                break;
+            case 'l':
+            case '"':
+                code = KeyEvent.KEYCODE_L;
+                break;
+            case -5:
+                code = KeyEvent.KEYCODE_DEL;
+                break;
+
+            case -6:
+                code = KeyEvent.KEYCODE_ALT_LEFT;
+                break;
+            case 'z':
+            case '7':
+                code = KeyEvent.KEYCODE_Z;
+                break;
+            case 'x':
+            case '8':
+                code = KeyEvent.KEYCODE_X;
+                break;
+            case 'c':
+            case '9':
+                code = KeyEvent.KEYCODE_C;
+                break;
+            case 'v':
+            case '?':
+                code = KeyEvent.KEYCODE_V;
+                break;
+            case 'b':
+            case '!':
+                code = KeyEvent.KEYCODE_B;
+                break;
+            case 'n':
+            case ',':
+                code = KeyEvent.KEYCODE_N;
+                break;
+            case 'm':
+            case '.':
+                code = KeyEvent.KEYCODE_M;
+                break;
+            case '$':
+                code = KeyEvent.KEYCODE_4;
+                break;
+            case 10:    // enter
+                code = KeyEvent.KEYCODE_ENTER;
+                break;
+
+            case -2:    // Ctrl
+                code = KeyEvent.KEYCODE_SHIFT_LEFT;
+                break;
+            case ' ':
+                code = KeyEvent.KEYCODE_SPACE;
+                break;
+            case -1012: // SYM
+                code = KeyEvent.KEYCODE_SYM;
+                break;
+            case -1:    // SHIFT
+                code = KeyEvent.KEYCODE_SHIFT_RIGHT;
+                break;
+            case -19:    // UP
+                code = KeyEvent.KEYCODE_DPAD_UP;
+                break;
+            case -20:    // DOWN
+                code = KeyEvent.KEYCODE_DPAD_DOWN;
+                break;
+            case -21:    // LEFT
+                code = KeyEvent.KEYCODE_DPAD_LEFT;
+                break;
+            case -22:    // RIGHT
+                code = KeyEvent.KEYCODE_DPAD_RIGHT;
+                break;
+        }
+        return code;
+    }
+
 }

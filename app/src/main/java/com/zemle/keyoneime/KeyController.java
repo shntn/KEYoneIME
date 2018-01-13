@@ -4,7 +4,6 @@ import android.content.Context;
 import android.inputmethodservice.KeyboardView;
 import android.view.KeyEvent;
 import android.view.inputmethod.InputConnection;
-import android.inputmethodservice.Keyboard;
 
 import java.util.Locale;
 
@@ -65,9 +64,6 @@ class KeyController {
         KeyEvent event_up;
 
         // 画面に定義しているが未実装のキー
-        if (primaryCode == KEYCODE_QWERTY_ALT) {
-            return;
-        }
         if (primaryCode == KEYCODE_QWERTY_ABC) {
             return;
         }
@@ -76,60 +72,34 @@ class KeyController {
         }
 
         // SHIFT, ALT, CTRL
-        keycode = convertKeyCode(primaryCode);
-        event_down = createKeyEvent(keycode, KeyEvent.ACTION_DOWN);
-        event_up = createKeyEvent(keycode, KeyEvent.ACTION_UP);
+        keycode = mKeyCode.convertKeyCode(primaryCode);
+        event_down = createKeyEventForSoftKeyboard(keycode, KeyEvent.ACTION_DOWN);
+        event_up = createKeyEventForSoftKeyboard(keycode, KeyEvent.ACTION_UP);
         mStateMetaKey.changeMetaKey(keycode, event_down);
         mStateMetaKey.changeMetaKey(keycode, event_up);
 
         // SoftKeyBoard 更新
         mStateKeyboard.changeSoftKey(event_down);
 
-        // DELETE :
-        if (primaryCode == Keyboard.KEYCODE_DELETE) {
-            keyDownUp(KeyEvent.KEYCODE_DEL);
+        // 表示可能な文字を出力
+        if ((primaryCode > 0)
+                && (!mStateMetaKey.isPressed(StateMetaKeyFacade.Meta.CTRL))) {
 
-        // SYM :
-        } else if (primaryCode == KEYCODE_QWERTY_SYM) {
-            //mStateKeyboard.pushSoftSYM();
-            if (mStateKeyboard.isState(StateKeyboard.State.Symbol2)) {
-                keycode = convertKeyCode(KEYCODE_QWERTY_ALT);
-                event_down = createKeyEvent(KEYCODE_QWERTY_ALT, KeyEvent.ACTION_DOWN);
-                event_up = createKeyEvent(KEYCODE_QWERTY_ALT, KeyEvent.ACTION_UP);
-                mStateMetaKey.changeMetaKey(keycode, event_down);
-                mStateMetaKey.changeMetaKey(keycode, event_up);
-                mStateMetaKey.changeMetaKey(keycode, event_down);
-                mStateMetaKey.changeMetaKey(keycode, event_up);
+            if (mStateMetaKey.isPressed(StateMetaKeyFacade.Meta.SHIFT)) {
+                primaryCode = Character.toUpperCase(primaryCode);
             }
+            pressText(primaryCode);
 
-        // 矢印キー
-        } else if (primaryCode == KEYCODE_QWERTY_UP) {
-            keyDownUp(KeyEvent.KEYCODE_DPAD_UP);
+        // 表示不可な文字を出力
+        } else if ((primaryCode < 0)
+                || (mStateMetaKey.isPressed(StateMetaKeyFacade.Meta.CTRL))) {
 
-        } else if (primaryCode == KEYCODE_QWERTY_DOWN) {
-            keyDownUp(KeyEvent.KEYCODE_DPAD_DOWN);
-
-        } else if (primaryCode == KEYCODE_QWERTY_LEFT) {
-            keyDownUp(KeyEvent.KEYCODE_DPAD_LEFT);
-
-        } else if (primaryCode == KEYCODE_QWERTY_RIGHT) {
-            keyDownUp(KeyEvent.KEYCODE_DPAD_RIGHT);
-
-        // 文字キー
-        } else {
-
-            // CTRL + LowerCase
-            if (mStateMetaKey.isPressed(StateMetaKeyFacade.Meta.CTRL)) {
-                ctrl_moji(primaryCode);
-
-            } else {
-                if (mStateMetaKey.isPressed(StateMetaKeyFacade.Meta.SHIFT)) {
-                    primaryCode = Character.toUpperCase(primaryCode);
-                }
-                pressText(primaryCode);
-            }
+            int metaState = mStateMetaKey.createMetaState();
+            event_down = mKeyCode.convertToKeyEvent(keycode, KeyEvent.ACTION_DOWN, metaState);
+            sendKey(event_down);
         }
 
+        // 同時押しでなくても有効なメタキーのOFF判定
         mStateMetaKey.changePrintingKey(keycode, event_down);
 
         // ソフトキーボードのインジケータを更新
@@ -146,7 +116,6 @@ class KeyController {
     }
 
     boolean onKeyDown(int keycode, KeyEvent event) {
-        int code;
         boolean result = false;
 
         // ALTキーのキーリピートは無視
@@ -167,6 +136,7 @@ class KeyController {
             return true;
         }
 
+        // CTRL. SHIFT, ALTの状態、ソフトキーボードを更新
         mStateMetaKey.changeMetaKey(keycode, event);
         mStateKeyboard.changeHardKey(event);
 
@@ -191,46 +161,32 @@ class KeyController {
         }
 
         else if (keycode == KeyEvent.KEYCODE_ENTER) {
-            result = false;
-        }
-
-        else if (keycode == KeyEvent.KEYCODE_DEL) {
-            keyDownUp(KeyEvent.KEYCODE_DEL);
+            keyDownUp(keycode);
             result = true;
         }
-
+        else if (keycode == KeyEvent.KEYCODE_DEL) {
+            result = false;
+        }
         else {
 
-            code = mKeyCode.convert(keycode);
+            int code = mKeyCode.convert(keycode);
 
-            if (code == KEYCODE_QWERTY_UP) {
-                keyDownUp(KeyEvent.KEYCODE_DPAD_UP);
-                result = true;
-            }
-            else if (code == KEYCODE_QWERTY_DOWN) {
-                keyDownUp(KeyEvent.KEYCODE_DPAD_DOWN);
-                result = true;
-            }
-            else if (code == KEYCODE_QWERTY_LEFT) {
-                keyDownUp(KeyEvent.KEYCODE_DPAD_LEFT);
-                result = true;
-            }
-            else if (code == KEYCODE_QWERTY_RIGHT) {
-                keyDownUp(KeyEvent.KEYCODE_DPAD_RIGHT);
-                result = true;
-            }
-
-            // CTRL + LowerCase
-            else if (mStateMetaKey.isPressed(StateMetaKeyFacade.Meta.CTRL)) {
-                ctrl_moji(code);
-                result = true;
-            }
-
-            else if (mKeyCode.isHardKey(keycode)) {
+            // 表示可能な文字を出力
+            if ((code > 0)
+                    && (!mStateMetaKey.isPressed(StateMetaKeyFacade.Meta.CTRL))) {
                 if (mStateMetaKey.isPressed(StateMetaKeyFacade.Meta.SHIFT)) {
                     code = Character.toUpperCase(code);
                 }
                 pressText(code);
+                result = true;
+
+            // 表示不可な文字を出力
+            } else if ((code < 0)
+                    || (mStateMetaKey.isPressed(StateMetaKeyFacade.Meta.CTRL))) {
+                int metaState = mStateMetaKey.createMetaState();
+
+                KeyEvent event_down = mKeyCode.convertToKeyEvent(keycode, KeyEvent.ACTION_DOWN, metaState);
+                sendKey(event_down);
                 result = true;
             }
         }
@@ -289,16 +245,7 @@ class KeyController {
             result = false;
 
         }
-/*
-        // ソフトキーボードの表示を更新
-        if (keycode != KeyEvent.KEYCODE_SYM) {
-            // ALT : ソフトキーボードの表示切り替え
-            if (!mStateMetaKey.isPressed(StateMetaKeyFacade.Meta.ALT)) {
-                mStateKeyboard.upHardALT();
-            }
 
-        }
-*/
         // CTRL : CTRLキーのインジケータを更新
         mKeyboardView.setCtrl(mStateMetaKey.isPressed(StateMetaKeyFacade.Meta.CTRL));
 
@@ -316,104 +263,11 @@ class KeyController {
         return result;
     }
 
-    private void ctrl_moji(int primaryCode) {
-        switch ((char)primaryCode) {
-            case 'a':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_A, KeyEvent.META_CTRL_ON);
-                break;
-            case 'b':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_B, KeyEvent.META_CTRL_ON);
-                break;
-            case 'c':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_C, KeyEvent.META_CTRL_ON);
-                break;
-            case 'd':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_D, KeyEvent.META_CTRL_ON);
-                break;
-            case 'e':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_E, KeyEvent.META_CTRL_ON);
-                break;
-            case 'f':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_F, KeyEvent.META_CTRL_ON);
-                break;
-            case 'g':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_G, KeyEvent.META_CTRL_ON);
-                break;
-            case 'h':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_H, KeyEvent.META_CTRL_ON);
-                break;
-            case 'i':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_I, KeyEvent.META_CTRL_ON);
-                break;
-            case 'j':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_J, KeyEvent.META_CTRL_ON);
-                break;
-            case 'k':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_K, KeyEvent.META_CTRL_ON);
-                break;
-            case 'l':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_L, KeyEvent.META_CTRL_ON);
-                break;
-            case 'm':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_M, KeyEvent.META_CTRL_ON);
-                break;
-            case 'n':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_N, KeyEvent.META_CTRL_ON);
-                break;
-            case 'o':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_O, KeyEvent.META_CTRL_ON);
-                break;
-            case 'p':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_P, KeyEvent.META_CTRL_ON);
-                break;
-            case 'q':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_Q, KeyEvent.META_CTRL_ON);
-                break;
-            case 'r':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_R, KeyEvent.META_CTRL_ON);
-                break;
-            case 's':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_S, KeyEvent.META_CTRL_ON);
-                break;
-            case 't':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_T, KeyEvent.META_CTRL_ON);
-                break;
-            case 'u':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_U, KeyEvent.META_CTRL_ON);
-                break;
-            case 'v':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_V, KeyEvent.META_CTRL_ON);
-                break;
-            case 'w':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_W, KeyEvent.META_CTRL_ON);
-                break;
-            case 'x':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_X, KeyEvent.META_CTRL_ON);
-                break;
-            case 'y':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_Y, KeyEvent.META_CTRL_ON);
-                break;
-            case 'z':
-                sendKey(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_Z, KeyEvent.META_CTRL_ON);
-                break;
-            default:
-                letter(primaryCode);
-                break;
-        }
-    }
-
-    void sendKey(int action, int code) {
+    void sendKey(KeyEvent event) {
         InputConnection ic = mService.getCurrentInputConnection();
 
         if (ic == null) { return; }
-        ic.sendKeyEvent(new KeyEvent(action, code));
-    }
-
-    void clearMetaKey(int states) {
-        InputConnection ic = mService.getCurrentInputConnection();
-        if (ic != null) {
-            ic.clearMetaKeyStates(states);
-        }
+        ic.sendKeyEvent(event);
     }
 
     private void keyDownUp(int keyEventCode) {
@@ -422,14 +276,6 @@ class KeyController {
         ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, keyEventCode));
         ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP,   keyEventCode));
     }
-
-    private void letter(int primaryCode) {
-        if (shift) {
-            primaryCode = Character.toUpperCase(primaryCode);
-        }
-        pressText(primaryCode);
-    }
-
     private void pressText(int primaryCode) {
         mService.getCurrentInputConnection().commitText(
                 String.valueOf((char) primaryCode),
@@ -437,169 +283,13 @@ class KeyController {
         );
     }
 
-    private void sendKey(int action, int code, int meta) {
-        long now = System.currentTimeMillis();
-        InputConnection ic = mService.getCurrentInputConnection();
-
-        if (ic == null) { return; }
-        ic.sendKeyEvent(new KeyEvent(
-                now, now, action, code,0, meta
-        ));
-    }
-
-    private int convertKeyCode(int primaryCode) {
-        int code = 0;
-
-        switch (primaryCode) {
-            case 'q':
-            case '#':
-                code = KeyEvent.KEYCODE_Q;
-                break;
-            case 'w':
-            case '1':
-                code = KeyEvent.KEYCODE_W;
-                break;
-            case 'e':
-            case '2':
-                code = KeyEvent.KEYCODE_E;
-                break;
-            case 'r':
-            case '3':
-                code = KeyEvent.KEYCODE_R;
-                break;
-            case 't':
-            case '(':
-                code = KeyEvent.KEYCODE_T;
-                break;
-            case 'y':
-            case ')':
-                code = KeyEvent.KEYCODE_Y;
-                break;
-            case 'u':
-            case '_':
-                code = KeyEvent.KEYCODE_U;
-                break;
-            case 'i':
-            case '-':
-                code = KeyEvent.KEYCODE_I;
-                break;
-            case 'o':
-            case '+':
-                code = KeyEvent.KEYCODE_O;
-                break;
-            case 'p':
-            case '@':
-                code = KeyEvent.KEYCODE_P;
-                break;
-
-            case 'a':
-            case '*':
-                code = KeyEvent.KEYCODE_A;
-                break;
-            case 's':
-            case '4':
-                code = KeyEvent.KEYCODE_S;
-                break;
-            case 'd':
-            case '5':
-                code = KeyEvent.KEYCODE_D;
-                break;
-            case 'f':
-            case '6':
-                code = KeyEvent.KEYCODE_F;
-                break;
-            case 'g':
-            case '/':
-                code = KeyEvent.KEYCODE_G;
-                break;
-            case 'h':
-            case ':':
-                code = KeyEvent.KEYCODE_H;
-                break;
-            case 'j':
-            case ';':
-                code = KeyEvent.KEYCODE_J;
-                break;
-            case 'k':
-            case '\'':
-                code = KeyEvent.KEYCODE_K;
-                break;
-            case 'l':
-            case '"':
-                code = KeyEvent.KEYCODE_L;
-                break;
-            case -5:
-                code = KeyEvent.KEYCODE_DEL;
-                break;
-
-            // ALT はない
-            case 'z':
-            case '7':
-                code = KeyEvent.KEYCODE_Z;
-                break;
-            case 'x':
-            case '8':
-                code = KeyEvent.KEYCODE_X;
-                break;
-            case 'c':
-            case '9':
-                code = KeyEvent.KEYCODE_C;
-                break;
-            case 'v':
-            case '?':
-                code = KeyEvent.KEYCODE_V;
-                break;
-            case 'b':
-            case '!':
-                code = KeyEvent.KEYCODE_B;
-                break;
-            case 'n':
-            case ',':
-                code = KeyEvent.KEYCODE_N;
-                break;
-            case 'm':
-            case '.':
-                code = KeyEvent.KEYCODE_M;
-                break;
-            case '$':
-                code = KeyEvent.KEYCODE_4;
-                break;
-            case 10:    // enter
-                code = KeyEvent.KEYCODE_ENTER;
-                break;
-
-            case -2:    // Ctrl
-                code = KeyEvent.KEYCODE_SHIFT_LEFT;
-                break;
-            case ' ':
-                code = KeyEvent.KEYCODE_SPACE;
-                break;
-            case -1012: // SYM
-                code = KeyEvent.KEYCODE_SYM;
-                break;
-            case -1:    // SHIFT
-                code = KeyEvent.KEYCODE_SHIFT_RIGHT;
-                break;
-        }
-        return code;
-    }
-
     private KeyEvent createKeyEvent(int keycode, int action) {
-        int metaState = 0;
+        int metaState = mStateMetaKey.createMetaState();
+        return new KeyEvent(0, 0, action, keycode, metaState);
+    }
 
-        // 現状のメタキー状態を作成
-        if (mStateMetaKey.isPressed(StateMetaKeyFacade.Meta.ALT)) {
-            metaState |= KeyEvent.META_ALT_LEFT_ON;
-            metaState |= KeyEvent.META_ALT_ON;
-        }
-        if (mStateMetaKey.isPressed(StateMetaKeyFacade.Meta.SHIFT)) {
-            metaState |= KeyEvent.META_SHIFT_RIGHT_ON;
-            metaState |= KeyEvent.META_SHIFT_ON;
-        }
-        if (mStateMetaKey.isPressed(StateMetaKeyFacade.Meta.CTRL)) {
-            metaState |= KeyEvent.META_CTRL_LEFT_ON;
-            metaState |= KeyEvent.META_CTRL_ON;
-        }
+    private KeyEvent createKeyEventForSoftKeyboard(int keycode, int action) {
+        int metaState = mStateMetaKey.createMetaState();
 
         // 入力されたメタキーを反映
         if (action == KeyEvent.ACTION_DOWN) {

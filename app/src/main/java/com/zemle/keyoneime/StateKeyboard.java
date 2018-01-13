@@ -28,7 +28,7 @@ class StateKeyboard {
         },
         Symbol1(R.xml.symbol1) {
             @Override
-            public void pushSoftSYM(StateKeyboard context) {
+            public void pushSoftALT(StateKeyboard context) {
                 context.changeState(Symbol2);
             }
 
@@ -49,7 +49,7 @@ class StateKeyboard {
         },
         Symbol2(R.xml.symbol2) {
             @Override
-            public void pushSoftSYM(StateKeyboard context) {
+            public void pushSoftALT(StateKeyboard context) {
                 context.changeState(Qwerty);
             }
 
@@ -70,11 +70,6 @@ class StateKeyboard {
         },
         HideQwerty(R.xml.hide) {
             @Override
-            public void pushSoftSYM(StateKeyboard context) {
-                context.changeState(Qwerty);
-            }
-
-            @Override
             public void pushHardSYM(StateKeyboard context) {
                 context.changeState(Symbol1);
             }
@@ -90,11 +85,6 @@ class StateKeyboard {
             }
         },
         HideSymbol2(R.xml.hide) {
-            @Override
-            public void pushSoftSYM(StateKeyboard context) {
-                context.changeState(Qwerty);
-            }
-
             @Override
             public void pushHardSYM(StateKeyboard context) {
                 context.changeState(HideQwerty);
@@ -125,6 +115,9 @@ class StateKeyboard {
         }
 
         void pushSoftSYM(StateKeyboard context) {
+        }
+
+        void pushSoftALT(StateKeyboard context) {
         }
 
         void pushHardSYM(StateKeyboard context) {
@@ -182,9 +175,13 @@ class StateKeyboard {
         int action = event.getAction();
         int keycode = event.getKeyCode();
 
-        if ((action == KeyEvent.ACTION_DOWN)
-                && (keycode == KeyEvent.KEYCODE_SYM)) {
-            mState.pushSoftSYM(this);
+        if (action == KeyEvent.ACTION_DOWN) {
+            if (keycode == KeyEvent.KEYCODE_SYM) {
+                mState.pushSoftSYM(this);
+            }
+            if (keycode == KeyEvent.KEYCODE_ALT_LEFT) {
+                mState.pushSoftALT(this);
+            }
         }
     }
 
