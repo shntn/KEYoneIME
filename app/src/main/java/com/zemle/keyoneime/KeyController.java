@@ -3,6 +3,8 @@ package com.zemle.keyoneime;
 import android.content.Context;
 import android.inputmethodservice.KeyboardView;
 import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 
 import java.util.Locale;
@@ -161,11 +163,11 @@ class KeyController {
         }
 
         else if (keycode == KeyEvent.KEYCODE_ENTER) {
-            keyDownUp(keycode);
-            result = true;
+            result = false;
         }
         else if (keycode == KeyEvent.KEYCODE_DEL) {
-            result = false;
+            handlerDelete();
+            result = true;
         }
         else {
 
@@ -268,6 +270,18 @@ class KeyController {
 
         if (ic == null) { return; }
         ic.sendKeyEvent(event);
+    }
+
+    void handlerDelete() {
+        InputConnection ic = mService.getCurrentInputConnection();
+        EditorInfo info = mService.getCurrentInputEditorInfo();
+        if (ic != null) {
+            CharSequence currentText = ic.getExtractedText(new ExtractedTextRequest(), 0).text;
+            int length = ic.getTextBeforeCursor(currentText.length(), 0).length();
+            if (length > 0) {
+                ic.deleteSurroundingText(1, 0);
+            }
+        }
     }
 
     private void keyDownUp(int keyEventCode) {
