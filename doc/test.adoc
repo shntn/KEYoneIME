@@ -1,0 +1,138 @@
+
+= Koime
+
+== Koime とは
+
+Blackberry KEYone用のIME。 +
+KeyOne IMEから命名。 +
+アルファベット、数字、記号のみ。日本語入力は未対応。
+
+== キーマップ
+
+*SYMキーのキーマップは検討中。*
+
+----
+
+Modifier Key : none
++---+---+---+---+---+---+---+---+---+---+
+| q | w | e | r | t | y | u | i | o | p |
++---+---+---+---+---+---+---+---+---+---+
+| a | s | d | f | g | h | j | k | l |DEL|
++---+---+---+---+---+---+---+---+---+---+
+|ALT| z | x | c | v | b | n | m |   |ENT|
++---+---++--+-+-+---+---+-+-+--++---+---+
+    |SHFT|    |   SPACE   |SYM |SHFT|
+    +----+----+-----------+----+----+
+
+Modifier Key : SHIFT
++---+---+---+---+---+---+---+---+---+---+
+| Q | W | E | R | T | Y | U | I | O | P |
++---+---+---+---+---+---+---+---+---+---+
+| A | S | D | F | G | H | J | K | L |DEL|
++---+---+---+---+---+---+---+---+---+---+
+|ALT| Z | X | C | V | B | N | M |   |ENT|
++---+---++--+-+-+---+---+-+-+--++---+---+
+    |SHFT|    |   SPACE   |SYM |SHFT|
+    +----+----+-----------+----+----+
+
+Modifier Key : ALT
++---+---+---+---+---+---+---+---+---+---+
+| # | 1 | 2 | 3 | ( | ) | _ | - | + | @ |
++---+---+---+---+---+---+---+---+---+---+
+| * | 4 | 5 | 6 | / | : | ; | ' | " |DEL|
++---+---+---+---+---+---+---+---+---+---+
+|ALT| 7 | 8 | 9 | ? | ! | , | . | $ |ENT|
++---+---++--+-+-+---+---+-+-+--++---+---+
+    |SHFT| 0  |   SPACE   |SYM |SHFT|
+    +----+----+-----------+----+----+
+
+Modifier Key : SYM
++---+---+---+---+---+---+---+---+---+---+
+|ESC| ` | ↑ | & | < | > | [ | ] | { | } |
++---+---+---+---+---+---+---+---+---+---+
+|TAB| ← | ↓ | → | | | \ | = | ^ | % |DEL|
++---+---+---+---+---+---+---+---+---+---+
+|ALT| ~ |   |   |   |   |   |   |   |ENT|
++---+---++--+-+-+---+---+-+-+--++---+---+
+    |SHFT|    |   SPACE   |SYM |SHFT|
+    +----+----+-----------+----+----+
+
+----
+
+== クラス図
+
+*設計変更の検討中*
+
+[plantuml]
+----
+@startuml
+
+class KoimeService {
+    + onInitializeInterface()
+    + onBindInput()
+    + onStartInput()
+    + onStartInputView()
+    + onCreateInputView()
+    + onKeyDown()
+    + onKeyUp()
+    + onFinishInput()
+    + onKey()
+    + onPress()
+    + onRelease()
+    + onText()
+    + swipeRight()
+    + swipeLeft()
+    + swipeDown()
+    + swipeUp()
+}
+
+class KoimeEvent {
+    - keycode
+    - keyMap
+    - modifierKey
+    ~ KoimeEvent(event, keyMap, modifierKey)
+}
+
+class ModifierKeyFacade {
+    - StateModifierKey mStateCtrl
+    - StateModifierKey mStateShift
+    - StateModifierKey mStateAlt
+    - StateModifierKey mStateSym
+    ~ press(event)
+    ~ release(event)
+    ~ clear()
+    ~ getCombination()
+}
+
+class StateModifierKey {
+    - State mState
+    - Config mConfig
+    ~ StateModifierKey(config)
+    ~ press()
+    ~ release()
+    ~ use()
+    ~ boolean isPressed()
+    - changeState()
+}
+
+class KoimeKeyboard {
+    - State mState
+    - ModifierKeyFacade mModifierKey
+    ~ KoimeKeyboard()
+    ~ press(event)
+    ~ release(event)
+    - createEvent()
+    - setKeyboard()
+    - setStickey()
+    - setCtrlKey(boolean state)
+    - setShiftKey(boolean state)
+}
+
+KoimeKeyboard - KoimeService
+KoimeKeyboard -- ModifierKeyFacade
+ModifierKeyFacade -- StateModifierKey
+KoimeEvent - KoimeKeyboard
+
+@enduml
+----
+

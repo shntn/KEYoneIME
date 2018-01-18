@@ -7,3 +7,6 @@
 /build
 /captures
 .externalNativeBuild
+/doc/diag-*.png.cache
+/doc/diag-*.png
+/doc/.asciidoctor
