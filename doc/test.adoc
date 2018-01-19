@@ -7,6 +7,9 @@ Blackberry KEYone用のIME。 +
 KeyOne IMEから命名。 +
 アルファベット、数字、記号のみ。日本語入力は未対応。
 
+本書の中に https://developer.android.com/reference/android/inputmethodservice/InputMethodService.html#onEvaluateInputViewShown()[InputMethodService | Android Developers] の翻訳が一部あるが、これはGoogle翻訳を行っただけの状態。
+
+
 == キーマップ
 
 *SYMキーのキーマップは検討中。*
@@ -58,6 +61,85 @@ Modifier Key : SYM
     +----+----+-----------+----+----+
 
 ----
+
+== 初期化関数について
+
+`onInitializeInterface()`::
+    サブクラスがインタフェースの初期化のために使用できる。
+    サービスが最初に作成された後、及び設定の変更が行われた後にUIオブジェクトが作成される前に呼び出される。
+
+`onBindInput()`::
+    新しいクライアントがインプットメソッドにバインドされた時に呼び出される。`getCurrentInputBinding()`、`getCurrentInputConnection()`が有効なオブジェクトを返す。この後に`onStartInput()`, `onFinishInput()`のコールが続く。
+
+`onStartInput()`::
+    テキスト入力がエディタで開始されたことをインプットメソッドに通知するために呼び出される。
+    このコールバックを使用して、与えられたエディタの状態に一致するように入力の状態を初期化する必要がある。
+
+`onCreateInputView()`::
+    需要に関係なく、UI生成のために呼び出される。
+    入力領域に表示するソフトキーボードなどを作成して返す。
+    入力領域が最初に表示された時に1回呼び出される。
+    入力領域を持たないときは、nullを返すことができる。
+    デフォルトの実装はnullを返す。
+    入力ビューを表示するタイミングを制御するためには`onEvaluateInputViewShown()`を実装する。
+    この関数で最初のビューを生成した後に入力ビューを変更するには`setInputView()`を使用する。
+
+`onCreateCandidatesView()`::
+    需要に関係なく、UI生成のために呼び出される。
+    候補を表示するために使用されるViewを作成して返す。
+    候補が最初に表示される時に1回呼び出される。
+    候補を表示しないようにnullを返すことができる。
+    デフォルトの実装はnullを返す。
+    候補ビューを表示するタイミングを制御するには、`setCandidatesViewShown()`を使用する。
+    この関数で最初のビューを作成した後に候補ビューを変更するには、`setCandidatesView()`を使用する。
+
+`onCreateExtractTextView()`::
+    需要に関係なく、UI生成のために呼び出される。
+    フレームワークによって抽出されたテキストを表示するためのレイアウトを作成するために呼び出される。
+    フルスクリーンモードでのみ呼び出される。
+
+`onStartInputView()`::
+    入力ビューが表示され、新しいエディタで入力が開始された時に呼び出される。
+    常に`onStartInput()`の後に呼び出される。
+    ここで一般的な設定とビュー固有の設定を行う。
+    この関数が呼び出される前に`onCreateInputView()`が呼ばれていることが保証されている。
+
+`onFinishInput()`::
+    最後のエディタでテキスト入力が完了したことをインプットメソッドに通知するために呼び出される。
+    この時点で、新しいエディタで入力を実行するための`onStartInput()`の呼び出しがあるか、インプットメソッドがアイドルのままになることがある。
+    このメソッドは、同じエディタで入力が再開された時は呼び出されない。
+    デフォルトの実装では`InputConnection｀を使用して、アクティブな合成テキストを消去する。
+    これをオーバーライトして（基本クラスを呼び出さずに）任意の動作を実行できる。
+
+
+=== ログ
+
+IMEが最初に起動した時に呼ばれるメソッドの順番。
+最後にIMEを切り替えているため、`onFinishInput()`が発生している。
+
+----
+01-20 00:17:57.721 9575-9575/? V/Koime: Method Start: KoimeService.onInitializeInterface()
+01-20 00:17:57.721 9575-9575/? V/Koime: Method Start: KoimeService.onBindInput()
+01-20 00:17:57.721 9575-9575/? V/Koime: Method Start: KoimeService.onStartInput(EditorInfo={actionId=0, imeOptions=52000006, initialSelStart=1, initialSelEnd=1, inputType=a0001}, restarting=false)
+01-20 00:17:57.722 9575-9575/? V/Koime: Method Start: KoimeService.onCreateInputView()
+01-20 00:17:57.749 9575-9575/? V/Koime: Method Start: KoimeService.onStartInputView(EditorInfo={actionId=0, imeOptions=52000006, initialSelStart=1, initialSelEnd=1, inputType=a0001}, restarting=false)
+01-20 00:18:06.163 9575-9575/com.zemle.keyoneime V/Koime: Method Start: KoimeService.onKeyDown(keyCode=57(39), KeyEvent="KeyEvent { action=ACTION_DOWN, keyCode=KEYCODE_ALT_LEFT, scanCode=56, metaState=META_ALT_ON|META_ALT_LEFT_ON, flags=0x8, repeatCount=0, eventTime=1180744170, downTime=1180744170, deviceId=0, source=0x101 }")
+01-20 00:18:06.480 9575-9575/com.zemle.keyoneime V/Koime: Method Start: KoimeService.onKeyUp(keyCode=57(39), KeyEvent="KeyEvent { action=ACTION_UP, keyCode=KEYCODE_ALT_LEFT, scanCode=56, metaState=META_ALT_ON|META_ALT_LEFT_ON, flags=0x28, repeatCount=0, eventTime=1180744482, downTime=1180744170, deviceId=0, source=0x101 }")
+01-20 00:18:06.484 9575-9575/com.zemle.keyoneime V/Koime: Method Start: KoimeService.onFinishInput()
+----
+
+== ソフト入力ビュー
+
+インプットメソッドの中核はソフト入力ビューとなる。
+ソフトキーの押下、文字の描画など、ほとんどのユーザーインタラクションが発生する場所。
+他にも、インプットメソッドがテキストを生成する。
+ほとんどの実装では、この作業のすべてを行う独自のビューがあり、`onCreateInputView()`が呼び出されたときに新しいインスタンスが返される。
+この時点で、入力ビューが表示されている限り、そのビューでのユーザー対話が表示され、InputMethodServiceをコールバックしてアプリケーションと適切に対話できる。
+あなたのソフト入力ビューをユーザーに表示するかどうかを決定したい状況が発生する。
+`onEvaluateInputViewShown()`を実装して、現在の環境で表示する必要があるかに基づいてtrueまたはfalseを返す。
+これに影響を与える状態が変更された場合は、`updateInputViewShown()`を呼び出して再評価する。
+使用可能なハードキーボードがない限り、デフォルトの実装では常に入力ビューが表示されます。
+これは、ほとんどのインプットメソッドで適切な動作です。
 
 == クラス図
 
@@ -136,3 +218,58 @@ KoimeEvent - KoimeKeyboard
 @enduml
 ----
 
+== シーケンス図
+
+[plantuml]
+----
+@startuml
+
+== onInitializedInterface ==
+
+android -> KoimeServer : onInitializedInterface()
+activate KoimeServer
+KoimeServer -> KoimeKeyboard : new
+activate KoimeKeyboard
+KoimeKeyboard -> ModifierKeyFacade : new
+activate ModifierKeyFacade
+ModifierKeyFacade -> "StateAlt \n : StateModifierKey" as StateAlt : new
+activate StateAlt
+StateAlt --> ModifierKeyFacade : Object
+deactivate StateAlt
+ModifierKeyFacade -> "StateCtrl \n : StateModifierKey" as StateCtrl : new
+activate StateCtrl
+StateCtrl --> ModifierKeyFacade : Object
+deactivate StateCtrl
+ModifierKeyFacade -> "StateShift \n : StateModifierKey" as StateShift : new
+activate StateShift
+StateShift --> ModifierKeyFacade : Object
+deactivate StateShift
+ModifierKeyFacade -> "StateSym \n : StateModifierKey" As StateSym : new
+Activate StateSym
+StateSym --> ModifierKeyFacade : Object
+deactivate StateSym
+ModifierKeyFacade --> KoimeKeyboard : Object
+deactivate ModifierKeyFacade
+deactivate KoimeKeyboard
+KoimeKeyboard --> KoimeServer : Object
+deactivate KoimeServer
+
+== onBindInput ==
+
+android -> KoimeServer : onBindInput()
+
+== onStartInput ==
+
+android -> KoimeServer : onStartInput()
+
+== onCreateInputView ==
+
+android -> KoimeServer : onCreateInputView()
+
+== onStartInputView ==
+
+android -> KoimeServer : onStartInputView()
+
+
+@enduml
+----
