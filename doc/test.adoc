@@ -128,24 +128,50 @@ IMEが最初に起動した時に呼ばれるメソッドの順番。
 01-20 00:18:06.484 9575-9575/com.zemle.keyoneime V/Koime: Method Start: KoimeService.onFinishInput()
 ----
 
-== ソフト入力ビュー
+== Soft Input View
 
-インプットメソッドの中核はソフト入力ビューとなる。
-ソフトキーの押下、文字の描画など、ほとんどのユーザーインタラクションが発生する場所。
-他にも、インプットメソッドがテキストを生成する。
-ほとんどの実装では、この作業のすべてを行う独自のビューがあり、`onCreateInputView()`が呼び出されたときに新しいインスタンスが返される。
-この時点で、入力ビューが表示されている限り、そのビューでのユーザー対話が表示され、InputMethodServiceをコールバックしてアプリケーションと適切に対話できる。
-あなたのソフト入力ビューをユーザーに表示するかどうかを決定したい状況が発生する。
-`onEvaluateInputViewShown()`を実装して、現在の環境で表示する必要があるかに基づいてtrueまたはfalseを返す。
-これに影響を与える状態が変更された場合は、`updateInputViewShown()`を呼び出して再評価する。
+ほとんどの入力メソッドの中心は、ソフト入力ビューです。
+これは、ソフトキーの押下、文字の描画など、ほとんどのユーザーインタラクションが発生する場所です。
+そうしないと、入力メソッドはテキストを生成します。
+ほとんどの実装では、この作業のすべてを行う独自のビューがあり、`onCreateInputView()`が呼び出されたときに新しいインスタンスが返されます。
+この時点で、入力ビューが表示されている限り、そのビューでのユーザー対話が表示され、InputMethodServiceをコールバックしてアプリケーションと適切に対話できます。
+
+あなたのソフト入力ビューをユーザーに表示するかどうかを決定したい状況がいくつかあります。
+これは、`onEvaluateInputViewShown()`を実装して、現在の環境で表示する必要があるかどうかに基づいてtrueまたはfalseを返すことによって行われます。
+これに影響を与える可能性のある状態が変更された場合は、`updateInputViewShown()`を呼び出して再評価します。
 使用可能なハードキーボードがない限り、デフォルトの実装では常に入力ビューが表示されます。
-これは、ほとんどのインプットメソッドで適切な動作です。
+これは、ほとんどの入力メソッドで適切な動作です。
+
+== Candidates View
+
+ユーザが生のテキストを生成している間、入力メソッドは、使用するために選択できるテキストの可能な解釈のリストをユーザに提供したいと思う。
+これは候補ビューで実行され、ソフト入力ビューと同様に`onCreateCandidatesView()`を実装して、候補UIを実装する独自のビューをインスタンス化します。
+
+候補ビューは、現在のテキストがユーザによって入力される可能性がある場合にのみ表示されるため、候補ビューは、入力ビューとは少し異なります。 
+候補ビューを表示するかどうかを制御するには、`setCandidatesViewShown(boolean)`を使用します。 候補のビューはたくさん表示され、隠される傾向があるため、ソフト入力ビューと同じ方法でアプリケーションUIに影響を与えません。
+アプリケーションウィンドウのサイズを変更することはなく、必要な場合にのみそれらをパンするようにします。 ユーザーは現在のフォーカスを見ることができます。
+
+== Generating Text
+
+IMEの重要な部分はもちろん、アプリケーション用のテキストを生成します。
+これは、`getCurrentInputConnection()`から取得できるアプリケーションへのInputConnectionインターフェイスの呼び出しによって実行されます。
+このインタフェースを使用すると、生のキーイベントを生成することができます。
+ターゲットがサポートしている場合は、候補とコミットされたテキストの文字列を直接編集できます。
+
+ターゲットが期待してサポートしているものに関する情報は、`getCurrentInputEditorInfo()`メソッドを使用して取得されたEditorInfoクラスから取得できます。
+これの最も重要な部分はEditorInfo.inputTypeです。
+特にこれがEditorInfo.TYPE_NULLの場合、ターゲットは複雑な編集をサポートしておらず、生のキーイベントのみをターゲットに配信する必要があります。
+入力メソッドでは、パスワードモードの検出、自動完全テキストビュー、電話番号の入力など、ここで他の値を参照したい場合もあります。
+
+ユーザーが入力ターゲットを切り替えると、`onFinishInput()`と`onStartInput(EditorInfo、boolean)`の呼び出しを受け取ります。
+これらを使用して、現在のターゲットの入力状態をリセットして初期化することができます。
+たとえば、入力状態をクリアし、新しいinputTypeに適したソフトキーボードを更新することがよくあります。
 
 == クラス図
 
 *設計変更の検討中*
 
-[plantuml]
+[plantuml,file="class.png"]
 ----
 @startuml
 
@@ -204,6 +230,7 @@ class KoimeKeyboard {
     ~ press(event)
     ~ release(event)
     - createEvent()
+    ~ createView()
     - setKeyboard()
     - setStickey()
     - setCtrlKey(boolean state)
@@ -220,15 +247,15 @@ KoimeEvent - KoimeKeyboard
 
 == シーケンス図
 
-[plantuml]
+[plantuml,file="sequence.png"]
 ----
 @startuml
 
 == onInitializedInterface ==
 
-android -> KoimeServer : onInitializedInterface()
-activate KoimeServer
-KoimeServer -> KoimeKeyboard : new
+android -> KoimeService : onInitializedInterface()
+activate KoimeService
+KoimeService -> KoimeKeyboard : new
 activate KoimeKeyboard
 KoimeKeyboard -> ModifierKeyFacade : new
 activate ModifierKeyFacade
@@ -245,31 +272,103 @@ activate StateShift
 StateShift --> ModifierKeyFacade : Object
 deactivate StateShift
 ModifierKeyFacade -> "StateSym \n : StateModifierKey" As StateSym : new
-Activate StateSym
+activate StateSym
 StateSym --> ModifierKeyFacade : Object
 deactivate StateSym
 ModifierKeyFacade --> KoimeKeyboard : Object
 deactivate ModifierKeyFacade
 deactivate KoimeKeyboard
-KoimeKeyboard --> KoimeServer : Object
-deactivate KoimeServer
+KoimeKeyboard --> KoimeService : Object
+deactivate KoimeService
 
 == onBindInput ==
 
-android -> KoimeServer : onBindInput()
+android -> KoimeService : onBindInput()
 
 == onStartInput ==
 
-android -> KoimeServer : onStartInput()
+android -> KoimeService : onStartInput()
 
 == onCreateInputView ==
 
-android -> KoimeServer : onCreateInputView()
+android -> KoimeService : onCreateInputView()
+activate KoimeService
+KoimeService -> KoimeKeyboard : createView()
+activate KoimeKeyboard
+KoimeKeyboard --> KoimeService : view
+deactivate KoimeKeyboard
+KoimeService --> android : view
+deactivate KoimeService
 
 == onStartInputView ==
 
-android -> KoimeServer : onStartInputView()
+android -> KoimeService : onStartInputVIew()
 
+== onKeyDown ==
+
+android -> KoimeService : onKeyDown
+activate KoimeService
+KoimeService -> KoimeKeyboard : press()
+activate KoimeKeyboard
+KoimeKeyboard -> ModifierKeyFacade : press()
+activate ModifierKeyFacade
+
+alt press ALT case
+
+    ModifierKeyFacade -> StateAlt : press()
+    activate StateAlt
+    StateAlt --> ModifierKeyFacade :
+    deactivate StateAlt
+
+else press CTRL case
+
+    ModifierKeyFacade -> StateCtrl : press()
+    activate StateCtrl
+    StateCtrl --> ModifierKeyFacade :
+    deactivate StateCtrl
+
+else press SHIFT case
+
+    ModifierKeyFacade -> StateShift : press()
+    activate StateShift
+    StateShift --> ModifierKeyFacade :
+    deactivate StateShift
+
+else press SYM case
+
+    ModifierKeyFacade -> StateSym : press()
+    activate StateSym
+    StateSym --> ModifierKeyFacade :
+    deactivate StateSym
+
+end
+
+ModifierKeyFacade --> KoimeKeyboard :
+deactivate ModifierKeyFacade
+KoimeKeyboard -> KoimeKeyboard : setCtrl()
+activate KoimeKeyboard
+KoimeKeyboard -> KoimeKeyboard : setSticky()
+activate KoimeKeyboard
+KoimeKeyboard --> KoimeKeyboard :
+deactivate KoimeKeyboard
+KoimeKeyboard --> KoimeKeyboard :
+deactivate KoimeKeyboard
+KoimeKeyboard -> KoimeKeyboard : setShift()
+activate KoimeKeyboard
+KoimeKeyboard -> KoimeKeyboard : setSticky()
+activate KoimeKeyboard
+KoimeKeyboard --> KoimeKeyboard :
+deactivate KoimeKeyboard
+KoimeKeyboard --> KoimeKeyboard :
+deactivate KoimeKeyboard
+KoimeKeyboard -> KoimeEvent : new
+activate KoimeEvent
+KoimeEvent --> KoimeKeyboard :
+deactivate KoimeEvent
+KoimeKeyboard --> KoimeService : 
+deactivate KoimeKeyboard
+KoimeService --> android
+deactivate KoimeService
 
 @enduml
 ----
