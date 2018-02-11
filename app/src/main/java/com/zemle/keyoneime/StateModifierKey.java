@@ -6,7 +6,7 @@ package com.zemle.keyoneime;
  * Created by shntn on 2018/01/10.
  */
 
-class StateMetaKey {
+class StateModifierKey {
     private boolean CONFIG_SIMULTANEOUS = true; // 同時押しではなくても有効にする
     private boolean CONFIG_LOCKED = true;  // 2回押すとON状態でロック
 
@@ -18,16 +18,18 @@ class StateMetaKey {
         state.enter(this);
     }
 
-    State getCurrent() {
-        return state;
-    }
-
-    void press() {
+    boolean press() {
         state.press(this);
+        return state != State.OFF;
     }
 
-    void release() {
+    boolean release() {
         state.release(this);
+        return state != State.OFF;
+    }
+
+    void clear() {
+        state = State.OFF;
     }
 
     void use() {
@@ -37,25 +39,32 @@ class StateMetaKey {
     boolean isPress() {
         return (state != State.OFF);
     }
+    boolean isOn() {
+        return state == State.ON;
+    }
+    boolean isLocked() {
+        return state == State.LOCKED;
+    }
+
 
     private enum State {
         OFF {
-            void press(StateMetaKey outer) {
+            void press(StateModifierKey outer) {
                 outer.changeState(ON);
             }
         },
         ON {
-            void enter(StateMetaKey outer) {
+            void enter(StateModifierKey outer) {
                 this.used = false;
                 this.pressed = true;
             }
 
-            void exit(StateMetaKey outer) {
+            void exit(StateModifierKey outer) {
                 this.used = false;
                 this.pressed = false;
             }
 
-            void press(StateMetaKey outer) {
+            void press(StateModifierKey outer) {
                 State next = OFF;
 
                 if (outer.CONFIG_LOCKED) {
@@ -64,14 +73,14 @@ class StateMetaKey {
                 outer.changeState(next);
             }
 
-            void use(StateMetaKey outer) {
+            void use(StateModifierKey outer) {
                 this.used = true;
                 if (!this.pressed) {
                     outer.changeState(OFF);
                 }
             }
 
-            void release(StateMetaKey outer) {
+            void release(StateModifierKey outer) {
                 this.pressed = false;
                 if ((this.used) || (!outer.CONFIG_SIMULTANEOUS)) {
                     outer.changeState(OFF);
@@ -79,7 +88,7 @@ class StateMetaKey {
             }
         },
         LOCKED {
-            void press(StateMetaKey outer) {
+            void press(StateModifierKey outer) {
                 outer.changeState(OFF);
             }
         };
@@ -87,10 +96,10 @@ class StateMetaKey {
         boolean pressed;
         boolean used;
 
-        void enter(StateMetaKey outer) {}
-        void exit(StateMetaKey outer) {}
-        void press(StateMetaKey outer) {}
-        void release(StateMetaKey outer) {}
-        void use(StateMetaKey outer) {}
+        void enter(StateModifierKey outer) {}
+        void exit(StateModifierKey outer) {}
+        void press(StateModifierKey outer) {}
+        void release(StateModifierKey outer) {}
+        void use(StateModifierKey outer) {}
     }
 }

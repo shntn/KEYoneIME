@@ -39,49 +39,49 @@ KEYoneKeyboardoard > Row > Key
     >
 
     <Row>
-        <Key android:codes="@integer/key_esc" android:keyLabel="esc" android:keyEdgeFlags="left"/>
-        <Key android:codes="@integer/key_none"  android:keyLabel=" "/>
-        <Key android:codes="@integer/key_none"  android:keyLabel=" "/>
-        <Key android:codes="@integer/key_none"  android:keyLabel=" "/>
-        <Key android:codes="@integer/key_none"  android:keyLabel=" "/>
-        <Key android:codes="96" android:keyLabel="`"/>
-        <Key android:codes="94" android:keyLabel="^"/>
-        <Key android:codes="60" android:keyLabel="&lt;"/>
-        <Key android:codes="62" android:keyLabel="&gt;"/>
-        <Key android:codes="37" android:keyLabel="%" android:keyEdgeFlags="right"/>
+        <Key android:codes="45" android:keyLabel="esc" android:keyEdgeFlags="left"/>
+        <Key android:codes="51" android:keyLabel="`"/>
+        <Key android:codes="33" android:keyLabel="↑"/>
+        <Key android:codes="46" android:keyLabel="&amp;"/>
+        <Key android:codes="48" android:keyLabel="&lt;"/>
+        <Key android:codes="53" android:keyLabel="&gt;"/>
+        <Key android:codes="49" android:keyLabel="["/>
+        <Key android:codes="37" android:keyLabel="]"/>
+        <Key android:codes="43" android:keyLabel="{"/>
+        <Key android:codes="44" android:keyLabel="}" android:keyEdgeFlags="right"/>
     </Row>
 
     <Row>
-        <Key android:codes="@integer/key_tab"  android:keyLabel="tab" android:keyEdgeFlags="left"/>
-        <Key android:codes="@integer/key_none"  android:keyLabel=" "/>
-        <Key android:codes="@integer/key_dpad_up" android:keyLabel="↑"/>
-        <Key android:codes="@integer/key_none"  android:keyLabel=" "/>
-        <Key android:codes="92" android:keyLabel="\\"/>
-        <Key android:codes="124" android:keyLabel="|"/>
-        <Key android:codes="38" android:keyLabel="&amp;"/>
-        <Key android:codes="91" android:keyLabel="["/>
-        <Key android:codes="93" android:keyLabel="]" android:keyEdgeFlags="right"/>
+        <Key android:codes="29" android:keyLabel="tab" android:keyEdgeFlags="left"/>
+        <Key android:codes="47" android:keyLabel="←"/>
+        <Key android:codes="32" android:keyLabel="↓"/>
+        <Key android:codes="34" android:keyLabel="→"/>
+        <Key android:codes="35" android:keyLabel="|"/>
+        <Key android:codes="36" android:keyLabel="\\"/>
+        <Key android:codes="38" android:keyLabel="="/>
+        <Key android:codes="39" android:keyLabel="^"/>
+        <Key android:codes="40" android:keyLabel="%" android:keyEdgeFlags="right"/>
     </Row>
 
     <Row>
         <Key android:codes="@integer/key_shift" android:keyIcon="@drawable/sym_keyboard_shift"
                 android:isModifier="true"
                 android:isSticky="true" android:keyEdgeFlags="left"/>
-        <Key android:codes="@integer/key_dpad_left" android:keyLabel="←" />
-        <Key android:codes="@integer/key_dpad_down" android:keyLabel="↓"/>
-        <Key android:codes="@integer/key_dpad_right" android:keyLabel="→"/>
-        <Key android:codes="@integer/key_none"  android:keyLabel=" "/>
-        <Key android:codes="126" android:keyLabel="~"/>
-        <Key android:codes="61" android:keyLabel="=" />
-        <Key android:codes="123" android:keyLabel="{"/>
-        <Key android:codes="125" android:keyLabel="}"/>
+        <Key android:codes="54" android:keyLabel="~" />
+        <Key android:codes="52" android:keyLabel=" "/>
+        <Key android:codes="31" android:keyLabel=" "/>
+        <Key android:codes="50" android:keyLabel=" "/>
+        <Key android:codes="30" android:keyLabel=" "/>
+        <Key android:codes="42" android:keyLabel=" " />
+        <Key android:codes="41" android:keyLabel=" "/>
+        <Key android:codes="11" android:keyLabel=" "/>
         <Key android:codes="@integer/key_delete" android:keyIcon="@drawable/sym_keyboard_delete"
                 android:keyEdgeFlags="right"
                 android:isRepeatable="true"/>
     </Row>
 
     <Row android:rowEdgeFlags="bottom">
-        <Key android:codes="key_jp" android:keyLabel="JP"
+        <Key android:codes="@integer/key_jp" android:keyLabel="JP"
             android:keyWidth="20%p" android:keyEdgeFlags="left"/>
         <Key android:codes="@integer/key_ctrl_left" android:keyLabel="Ctrl" android:keyWidth="15%p"/>
         <Key android:codes="@integer/key_space" android:keyIcon="@drawable/sym_keyboard_space"

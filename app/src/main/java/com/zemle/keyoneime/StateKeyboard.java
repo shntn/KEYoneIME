@@ -2,6 +2,8 @@ package com.zemle.keyoneime;
 
 import android.view.KeyEvent;
 
+import java.util.EnumSet;
+
 /**
  * ソフトキーボードの状態遷移
  *
@@ -11,91 +13,102 @@ import android.view.KeyEvent;
 class StateKeyboard {
     enum State {
         Qwerty(R.xml.qwerty) {
-            @Override
-            public void pushSoftSYM(StateKeyboard context) {
-                context.changeState(Symbol1);
+            public void changeHard(StateKeyboard context, KoimeKey key) {
+                if (key.contains(EnumSet.of(KoimeKey.Key.ALT))) {
+                    context.changeState(HideSymbol2);
+                } else if (key.contains(EnumSet.of(KoimeKey.Key.SYM))) {
+                    context.changeState(Symbol1);
+                } else {
+                    // 状態保持
+                }
             }
 
-            @Override
-            public void pushHardSYM(StateKeyboard context) {
-                context.changeState(HideQwerty);
-            }
-
-            @Override
-            public void downHardALT(StateKeyboard context) {
-                context.changeState(Symbol2);
+            public void changeSoft(StateKeyboard context, KoimeKey key) {
+                if (key.contains(EnumSet.of(KoimeKey.Key.ALT))) {
+                    context.changeState(Symbol2);
+                } else if (key.contains(EnumSet.of(KoimeKey.Key.SYM))) {
+                    context.changeState(Symbol1);
+                } else {
+                    // 状態保持
+                }
             }
         },
         Symbol1(R.xml.symbol1) {
-            @Override
-            public void pushSoftALT(StateKeyboard context) {
-                context.changeState(Symbol2);
+            public void changeHard(StateKeyboard context, KoimeKey key) {
+                if (key.contains(EnumSet.of(KoimeKey.Key.ALT))) {
+                    context.changeState(HideSymbol2);
+                } else if (key.contains(EnumSet.of(KoimeKey.Key.SYM))) {
+                    // 状態保持
+                } else {
+                    context.changeState(HideQwerty);
+                }
             }
 
-            @Override
-            public void pushHardSYM(StateKeyboard context) {
-                context.changeState(Symbol2);
+            public void changeSoft(StateKeyboard context, KoimeKey key) {
+                if (key.contains(EnumSet.of(KoimeKey.Key.ALT))) {
+                    context.changeState(Symbol2);
+                } else if (key.contains(EnumSet.of(KoimeKey.Key.SYM))) {
+                    // 状態保持
+                } else {
+                    context.changeState(Qwerty);
+                }
             }
 
-            @Override
-            public void downHardALT(StateKeyboard context) {
-                context.changeState(Symbol2);
-            }
-
-            @Override
             public State getType() {
                 return State.Symbol1;
             }
         },
         Symbol2(R.xml.symbol2) {
-            @Override
-            public void pushSoftALT(StateKeyboard context) {
-                context.changeState(Qwerty);
+            public void changeHard(StateKeyboard context, KoimeKey key) {
+                if (key.contains(EnumSet.of(KoimeKey.Key.ALT))) {
+                    // 状態保持
+                } else if (key.contains(EnumSet.of(KoimeKey.Key.SYM))) {
+                    context.changeState(Symbol1);
+                } else {
+                    context.changeState(HideQwerty);
+                }
             }
 
-            @Override
-            public void pushHardSYM(StateKeyboard context) {
-                context.changeState(HideQwerty);
+            public void changeSoft(StateKeyboard context, KoimeKey key) {
+                if (key.contains(EnumSet.of(KoimeKey.Key.ALT))) {
+                    // 状態保持
+                } else if (key.contains(EnumSet.of(KoimeKey.Key.SYM))) {
+                    context.changeState(Symbol1);
+                } else {
+                    context.changeState(Qwerty);
+                }
             }
 
-            @Override
-            public void upHardALT(StateKeyboard context) {
-                context.changeState(HideQwerty);
-            }
-
-            @Override
             public State getType() {
                 return State.Symbol2;
             }
         },
         HideQwerty(R.xml.hide) {
-            @Override
-            public void pushHardSYM(StateKeyboard context) {
-                context.changeState(Symbol1);
+            public void changeHard(StateKeyboard context, KoimeKey key) {
+                if (key.contains(EnumSet.of(KoimeKey.Key.ALT))) {
+                    context.changeState(HideSymbol2);
+                } else if (key.contains(EnumSet.of(KoimeKey.Key.SYM))) {
+                    context.changeState(Symbol1);
+                } else {
+                    // 状態保持
+                }
             }
 
-            @Override
-            public void downHardALT(StateKeyboard context) {
-                context.changeState(HideSymbol2);
-            }
-
-            @Override
             public State getType() {
                 return State.Qwerty;
             }
         },
         HideSymbol2(R.xml.hide) {
-            @Override
-            public void pushHardSYM(StateKeyboard context) {
-                context.changeState(HideQwerty);
+            public void changeHard(StateKeyboard context, KoimeKey key) {
+                if (key.contains(EnumSet.of(KoimeKey.Key.ALT))) {
+                    // 状態保持
+                } else if (key.contains(EnumSet.of(KoimeKey.Key.SYM))) {
+                    context.changeState(Symbol1);
+                } else {
+                    context.changeState(HideQwerty);
+                }
             }
 
-            @Override
-            public void upHardALT(StateKeyboard context) {
-                context.changeState(HideQwerty);
-            }
-
-            @Override
             public State getType() {
                 return State.Symbol2;
             }
@@ -107,35 +120,29 @@ class StateKeyboard {
             this.xmlId = xmlId;
         }
 
-        void leave(KoimeKeyboardView keyboardView) {
+        void leave(KoimeKeyboard keyboardView) {
         }
 
-        void enter(KoimeKeyboardView keyboardView) {
-            keyboardView.setKeyboard(this.xmlId);
+        void enter(KoimeKeyboard keyboardView) {
+            //keyboardView.setKeyboard(this.xmlId);
         }
 
-        void pushSoftSYM(StateKeyboard context) {
+        void changeHard(StateKeyboard context, KoimeKey key) {
         }
-
-        void pushSoftALT(StateKeyboard context) {
-        }
-
-        void pushHardSYM(StateKeyboard context) {
-        }
-
-        void downHardALT(StateKeyboard context) {
-        }
-
-        void upHardALT(StateKeyboard context) {
+        void changeSoft(StateKeyboard context, KoimeKey key) {
         }
 
         State getType() {
             return State.Qwerty;
         }
+
+        int getId() {
+            return xmlId;
+        }
     }
 
     private State mState;
-    private KoimeKeyboardView mKeyboardView;
+    private KoimeKeyboard mKeyboardView;
 
     private void changeState(State state) {
         mState.leave(mKeyboardView);
@@ -147,42 +154,12 @@ class StateKeyboard {
         mState = State.Qwerty;
     }
 
-    void setup(KoimeKeyboardView keyboardView) {
-        mKeyboardView = keyboardView;
+    void changeHardKey(KoimeKey key) {
+        mState.changeHard(this, key);
     }
 
-    void changeHardKey(KeyEvent event) {
-        int action = event.getAction();
-        int keycode = event.getKeyCode();
-
-        switch (action) {
-            case KeyEvent.ACTION_DOWN:
-                if (keycode == KeyEvent.KEYCODE_SYM) {
-                    mState.pushHardSYM(this);
-                } else if (keycode == KeyEvent.KEYCODE_ALT_LEFT) {
-                    mState.downHardALT(this);
-                }
-                break;
-            case KeyEvent.ACTION_UP:
-                if (keycode == KeyEvent.KEYCODE_ALT_LEFT) {
-                    mState.upHardALT(this);
-                }
-                break;
-        }
-    }
-
-    void changeSoftKey(KeyEvent event) {
-        int action = event.getAction();
-        int keycode = event.getKeyCode();
-
-        if (action == KeyEvent.ACTION_DOWN) {
-            if (keycode == KeyEvent.KEYCODE_SYM) {
-                mState.pushSoftSYM(this);
-            }
-            if (keycode == KeyEvent.KEYCODE_ALT_LEFT) {
-                mState.pushSoftALT(this);
-            }
-        }
+    void changeSoftKey(KoimeKey key) {
+        mState.changeSoft(this, key);
     }
 
     boolean isState(State state) {
@@ -191,6 +168,10 @@ class StateKeyboard {
 
     boolean isType(State state) {
         return state == mState.getType();
+    }
+
+    int getId() {
+        return mState.getId();
     }
 }
 

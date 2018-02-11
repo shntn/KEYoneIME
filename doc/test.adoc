@@ -10,7 +10,7 @@ KeyOne IMEから命名。 +
 本書の中に https://developer.android.com/reference/android/inputmethodservice/InputMethodService.html#onEvaluateInputViewShown()[InputMethodService | Android Developers] の翻訳が一部あるが、これはGoogle翻訳を行っただけの状態。
 
 
-== hard キーマップ
+== hard キーマップ26j
 
 *SYMキーのキーマップは検討中。*
 
@@ -89,7 +89,7 @@ Modifier Key : SHIFT
 |   JP   |CTRL|   SPACE   |SYM | ENTER  |
 +--------+----+-----------+----+--------+
 
-Modifier Key : SYN
+Modifier Key : ALT
 +---+---+---+---+---+---+---+---+---+---+
 | # | 1 | 2 | 3 | ( | ) | _ | - | + | @ |
 +---+---+---+---+---+---+---+---+---+---+
@@ -295,8 +295,8 @@ IMEの重要な部分はもちろん、アプリケーション用のテキス�
 | KEYCODE_GRAVE                         |       | 68    | 0x00000044
 | KEYCODE_MINUS                         | -     | 69    | 0x00000045
 | KEYCODE_EQUALS                        | =     | 70    | 0x00000046
-| KEYCODE_LEFT_BRACKET                  |       | 71    | 0x00000047
-| KEYCODE_RIGHT_BRACKET                 |       | 72    | 0x00000048
+| KEYCODE_LEFT_BRACKET                  | [     | 71    | 0x00000047
+| KEYCODE_RIGHT_BRACKET                 | ]     | 72    | 0x00000048
 | KEYCODE_BACKSLASH                     | \     | 73    | 0x00000049
 | KEYCODE_SEMICOLON                     | ;     | 74    | 0x0000004a
 | KEYCODE_APOSTROPHE                    | "     | 75    | 0x0000004b

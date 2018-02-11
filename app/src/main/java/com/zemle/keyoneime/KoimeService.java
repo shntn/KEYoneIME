@@ -16,22 +16,24 @@ import java.util.Locale;
  * InputMethod
  *
  * InputMethodのライフサイクルに関わる処理はここで行う。
- * 受け付けたキー入力イベントはKeyControllerに移譲。
  *
  * Created by shntn on 2017/12/16.
  */
 
 public class KoimeService extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
-    private static final int KEYCODE_QWERTY_CTRL = -2;
 
-    private KoimeKeyboardView mKoimeKeyboardView = null;
-    private KeyController mKeyController = null;
-    private KeyboardView mKeyboardView = null;
+    private KoimeKeyboard mKeyboard = null;
+    private KoimeKeyboardView mKeyboardView = null;
+    private StateKeyboard mStateKeyboard = null;
+    private EachKey mEachKey = null;
 
     @Override
     public void onInitializeInterface() {
         KoimeLog.d("Method Start: KoimeService.onInitializeInterface()");
-        super.onInitializeInterface();
+
+        Context context = getApplicationContext();
+        mKeyboard = new KoimeKeyboard(context, this);
+        mEachKey  = new EachKey(this);
     }
 
     @Override
@@ -59,6 +61,15 @@ public class KoimeService extends InputMethodService implements KeyboardView.OnK
 
         ));
         super.onStartInput(attr, restarting);
+        //updateInputViewShown();
+    }
+
+    @Override
+    public boolean onEvaluateInputViewShown() {
+        KoimeLog.d("Method Start: KoimeService.onEvaluateInputViewShown()");
+
+        super.onEvaluateInputViewShown();
+        return true;
     }
 
     @Override
@@ -84,13 +95,10 @@ public class KoimeService extends InputMethodService implements KeyboardView.OnK
 
     private KeyboardView createInputView() {
         Context context = getApplicationContext();
-        KeyboardView keyboardView;
+        mKeyboardView = new KoimeKeyboardView(context, this);
+        mStateKeyboard = new StateKeyboard();
 
-        mKeyController = KeyController.getInstance();
-        mKeyController.setup(context, this);
-        keyboardView = mKeyController.createKeyboardView();
-
-        return keyboardView;
+        return mKeyboardView.createView();
     }
 
     @Override
@@ -106,10 +114,18 @@ public class KoimeService extends InputMethodService implements KeyboardView.OnK
                 "Method Start: KoimeService.onKeyDown(keyCode=%d(%x), KeyEvent=\"%s\")",
                 keyCode, keyCode, event.toString()
         ));
-        boolean status;
+        KoimeKey key;
 
-        status = mKeyController.onKeyDown(keyCode, event);
-        return status || super.onKeyDown(keyCode, event);
+        key = mKeyboard.press(event);
+        if (mStateKeyboard != null) {
+            mStateKeyboard.changeHardKey(key);
+        }
+        if (mKeyboardView != null) {
+            mKeyboardView.setKeyboard(mStateKeyboard.getId());
+            mKeyboardView.updateStickeies(key);
+        }
+
+        return mEachKey.run(key) || super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -118,10 +134,18 @@ public class KoimeService extends InputMethodService implements KeyboardView.OnK
                 "Method Start: KoimeService.onKeyUp(keyCode=%d(%x), KeyEvent=\"%s\")",
                 keyCode, keyCode, event.toString()
         ));
-        boolean status;
+        KoimeKey key;
 
-        status = mKeyController.onKeyUp(keyCode, event);
-        return status || super.onKeyUp(keyCode, event);
+        key = mKeyboard.release(event);
+        if (mStateKeyboard != null) {
+            mStateKeyboard.changeHardKey(key);
+        }
+        if (mKeyboardView != null) {
+            mKeyboardView.setKeyboard(mStateKeyboard.getId());
+            mKeyboardView.updateStickeies(key);
+        }
+
+        return super.onKeyUp(keyCode, event);
     }
 
     @Override
@@ -131,7 +155,33 @@ public class KoimeService extends InputMethodService implements KeyboardView.OnK
     }
 
     public void onKey(int primaryCode, int[] keyCodes) {
-        mKeyController.onKey(primaryCode, keyCodes);
+        KoimeLog.d(String.format(Locale.US,
+                "Method Start: KoimeService.onKey(primaryCode=%d(%x))",
+                primaryCode, primaryCode
+        ));
+        KeyEvent event;
+        KoimeKey key;
+        int metaState;
+
+        metaState = mKeyboard.createMetaState();
+        event = new KeyEvent(
+               0,
+               0,
+                KeyEvent.ACTION_DOWN,
+                primaryCode,
+               0,
+                metaState | KeyEvent.META_FUNCTION_ON);     // FUNCTIONをソフトキー入力の通知として使用
+        key = mKeyboard.press(event);
+        mStateKeyboard.changeSoftKey(key);
+        mKeyboardView.setKeyboard(mStateKeyboard.getId());
+        mKeyboardView.updateStickeies(key);
+        mEachKey.run(key);
+
+        event = event.changeAction(event, KeyEvent.ACTION_UP);
+        key = mKeyboard.release(event);
+        mStateKeyboard.changeSoftKey(key);
+        mKeyboardView.setKeyboard(mStateKeyboard.getId());
+        mKeyboardView.updateStickeies(key);
     }
 
     public void onPress(int primaryCode) {

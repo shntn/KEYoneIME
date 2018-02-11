@@ -3,8 +3,11 @@ package com.zemle.keyoneime;
 import android.content.Context;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.view.KeyEvent;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * キーボードビューの管理
@@ -13,8 +16,6 @@ import java.util.List;
  */
 
 class KoimeKeyboardView {
-    private static final int KEYCODE_QWERTY_CTRL = -2;
-
     private Context mContext;
     private KoimeService mService;
     private KeyboardView mKeyboardView;
@@ -22,6 +23,7 @@ class KoimeKeyboardView {
     KoimeKeyboardView(Context context, KoimeService service) {
         mContext = context;
         mService = service;
+        mKeyboardView = null;
     }
 
     KeyboardView createView() {
@@ -40,6 +42,11 @@ class KoimeKeyboardView {
         mKeyboardView.setKeyboard(keyboard);
     }
 
+    void updateStickeies(KoimeKey key) {
+        setCtrl(key);
+        setShift(key);
+    }
+
     private void setSticky(int keyCode, boolean state) {
         int i = 0;
         List<Keyboard.Key> mKeyboardViewKeys = mKeyboardView.getKeyboard().getKeys();
@@ -54,12 +61,18 @@ class KoimeKeyboardView {
         mKeyboardView.invalidateKey(i);
     }
 
-    void setCtrl(boolean state) {
-        setSticky(KEYCODE_QWERTY_CTRL, state);
+    private void setCtrl(KoimeKey key) {
+        boolean state;
+
+        state = key.contains(EnumSet.of(KoimeKey.Key.SHIFT_LEFT));
+        setSticky(KeyEvent.KEYCODE_SHIFT_LEFT, state);
     }
 
-    void setShift(boolean state) {
-        mKeyboardView.setShifted(state);
+    private void setShift(KoimeKey key) {
+        boolean state;
+
+        state = key.contains(EnumSet.of(KoimeKey.Key.SHIFT_RIGHT));
+        setSticky(KeyEvent.KEYCODE_SHIFT_RIGHT, state);
+        mKeyboardView.setShifted(key.contains(EnumSet.of(KoimeKey.Key.SHIFT_RIGHT)));
     }
 }
-
