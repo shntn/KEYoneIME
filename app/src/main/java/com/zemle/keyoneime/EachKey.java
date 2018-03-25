@@ -638,7 +638,7 @@ class EachKey {
                             0,
                             0,
                             KeyEvent.ACTION_DOWN,
-                            KeyEvent.KEYCODE_L,
+                            KeyEvent.KEYCODE_Z,
                             0,
                             key.makeMetaState()
                     );
@@ -666,7 +666,7 @@ class EachKey {
                             0,
                             0,
                             KeyEvent.ACTION_DOWN,
-                            KeyEvent.KEYCODE_L,
+                            KeyEvent.KEYCODE_X,
                             0,
                             key.makeMetaState()
                     );
@@ -694,7 +694,7 @@ class EachKey {
                             0,
                             0,
                             KeyEvent.ACTION_DOWN,
-                            KeyEvent.KEYCODE_L,
+                            KeyEvent.KEYCODE_C,
                             0,
                             key.makeMetaState()
                     );
@@ -722,7 +722,7 @@ class EachKey {
                             0,
                             0,
                             KeyEvent.ACTION_DOWN,
-                            KeyEvent.KEYCODE_L,
+                            KeyEvent.KEYCODE_V,
                             0,
                             key.makeMetaState()
                     );
@@ -750,7 +750,7 @@ class EachKey {
                             0,
                             0,
                             KeyEvent.ACTION_DOWN,
-                            KeyEvent.KEYCODE_L,
+                            KeyEvent.KEYCODE_B,
                             0,
                             key.makeMetaState()
                     );
@@ -778,7 +778,7 @@ class EachKey {
                             0,
                             0,
                             KeyEvent.ACTION_DOWN,
-                            KeyEvent.KEYCODE_L,
+                            KeyEvent.KEYCODE_N,
                             0,
                             key.makeMetaState()
                     );
@@ -806,7 +806,7 @@ class EachKey {
                             0,
                             0,
                             KeyEvent.ACTION_DOWN,
-                            KeyEvent.KEYCODE_L,
+                            KeyEvent.KEYCODE_M,
                             0,
                             key.makeMetaState()
                     );
@@ -817,13 +817,14 @@ class EachKey {
                 return true;
             }
         },
-        LOWER_4(EnumSet.of(KoimeKey.Key.L, KoimeKey.Key.DOWN)) {
+        LOWER_4(EnumSet.of(KoimeKey.Key.NUM_4, KoimeKey.Key.DOWN)) {
             boolean run(EachKey context, KoimeKey key) {
-                int code = ' ';
+                int code;
                 KeyEvent event;
 
                 if (key.contains(EnumSet.of(KoimeKey.Key.ALT))) {
                     code = '$';
+                    context.pressText(code);
                 } else if (key.contains(EnumSet.of(KoimeKey.Key.SYM))) {
                     return false;
                 } else if (key.contains(EnumSet.of(KoimeKey.Key.SHIFT_RIGHT))) {
@@ -834,13 +835,38 @@ class EachKey {
                             0,
                             0,
                             KeyEvent.ACTION_DOWN,
-                            KeyEvent.KEYCODE_L,
+                            KeyEvent.KEYCODE_4,
                             0,
                             key.makeMetaState()
                     );
                     context.sendKey(event);
-                } else {
+                }
+                return true;
+            }
+        },
+        LOWER_0(EnumSet.of(KoimeKey.Key.NUM_0, KoimeKey.Key.DOWN)) {
+            boolean run(EachKey context, KoimeKey key) {
+                int code;
+                KeyEvent event;
+
+                if (key.contains(EnumSet.of(KoimeKey.Key.ALT))) {
+                    code = '0';
                     context.pressText(code);
+                } else if (key.contains(EnumSet.of(KoimeKey.Key.SYM))) {
+                    return false;
+                } else if (key.contains(EnumSet.of(KoimeKey.Key.SHIFT_RIGHT))) {
+                    return false;
+                }
+                if (key.contains(EnumSet.of(KoimeKey.Key.SHIFT_LEFT))) {
+                    event = new KeyEvent(
+                            0,
+                            0,
+                            KeyEvent.ACTION_DOWN,
+                            KeyEvent.KEYCODE_0,
+                            0,
+                            key.makeMetaState()
+                    );
+                    context.sendKey(event);
                 }
                 return true;
             }
@@ -873,20 +899,23 @@ class EachKey {
     }
 
     boolean run(KoimeKey key) {
-        KoimeKey key_clone;
+        KoimeKey    key_clone;
+        boolean     result;
 
         key_clone = key.clone();
-        if (!key_clone.isPressed(KoimeKey.Key.SYM)) {
+        if (key_clone.isPressed(KoimeKey.Key.SYM)) {
+            result = true;
+        } else {
             key_clone.remove(EnumSet.of(
                     KoimeKey.Key.SHIFT_LEFT,
                     KoimeKey.Key.SHIFT_RIGHT,
                     KoimeKey.Key.ALT,
                     KoimeKey.Key.SYM
             ));
+            KeySet keySet = KeySet.getByKey(key_clone.getBySet());
+            result = keySet.run(this, key);
         }
-        KeySet keySet = KeySet.getByKey(key_clone.getBySet());
-
-        return keySet.run(this, key);
+        return result;
     }
 
     private void sendKey(KeyEvent event) {

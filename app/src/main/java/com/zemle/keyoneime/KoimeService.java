@@ -120,7 +120,7 @@ public class KoimeService extends InputMethodService implements KeyboardView.OnK
         if (mStateKeyboard != null) {
             mStateKeyboard.changeHardKey(key);
         }
-        if (mKeyboardView != null) {
+        if ((mKeyboardView != null) && (mStateKeyboard != null)) {
             mKeyboardView.setKeyboard(mStateKeyboard.getId());
             mKeyboardView.updateStickeies(key);
         }
@@ -140,12 +140,12 @@ public class KoimeService extends InputMethodService implements KeyboardView.OnK
         if (mStateKeyboard != null) {
             mStateKeyboard.changeHardKey(key);
         }
-        if (mKeyboardView != null) {
+        if ((mKeyboardView != null) && (mStateKeyboard != null)) {
             mKeyboardView.setKeyboard(mStateKeyboard.getId());
             mKeyboardView.updateStickeies(key);
         }
 
-        return super.onKeyUp(keyCode, event);
+        return mEachKey.run(key) || super.onKeyUp(keyCode, event);
     }
 
     @Override
@@ -177,7 +177,7 @@ public class KoimeService extends InputMethodService implements KeyboardView.OnK
         mKeyboardView.updateStickeies(key);
         mEachKey.run(key);
 
-        event = event.changeAction(event, KeyEvent.ACTION_UP);
+        event = KeyEvent.changeAction(event, KeyEvent.ACTION_UP);
         key = mKeyboard.release(event);
         mStateKeyboard.changeSoftKey(key);
         mKeyboardView.setKeyboard(mStateKeyboard.getId());
